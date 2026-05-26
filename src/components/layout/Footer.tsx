@@ -1,0 +1,3 @@
+export function Footer() {
+  return <footer className="border-t bg-white"><div className="mx-auto grid max-w-7xl gap-6 px-4 py-10 md:grid-cols-3"><div><p className="text-xl font-black text-ink">PointNear</p><p className="mt-3 text-sm text-slate-600">Conectando pessoas aos melhores lugares próximos.</p></div><div className="text-sm text-slate-600"><p className="font-bold text-ink">Produto</p><p className="mt-2">Busca local</p><p>Dashboard do parceiro</p><p>Perfis comerciais</p></div><div className="text-sm text-slate-600"><p className="font-bold text-ink">Contato</p><p className="mt-2">contato@pointnear.local</p><p>São Paulo, SP</p></div></div></footer>;
+}
