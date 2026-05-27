@@ -1,5 +1,5 @@
 import React from "react";
-import { Store, Instagram, Facebook, Twitter } from "lucide-react";
+import { Store, Instagram, Twitter } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
@@ -13,8 +13,7 @@ export function Footer() {
           <div className="col-span-1 md:col-span-1">
             <Link
               to="/"
-              className="flex items-center gap-2 mb-4 group inline-flex"
-            >
+              className="flex items-center gap-2 mb-4 group inline-flex">
               <div className="bg-terracotta text-white p-1.5 rounded-lg">
                 <Store size={24} />
               </div>
@@ -28,21 +27,14 @@ export function Footer() {
             </p>
             <div className="flex gap-4">
               <a
-                href="#"
-                className="text-moss-300 hover:text-white transition-colors"
-              >
+                href="https://www.instagram.com/point.near/"
+                className="text-moss-300 hover:text-white transition-colors">
                 <Instagram size={20} />
               </a>
+
               <a
-                href="#"
-                className="text-moss-300 hover:text-white transition-colors"
-              >
-                <Facebook size={20} />
-              </a>
-              <a
-                href="#"
-                className="text-moss-300 hover:text-white transition-colors"
-              >
+                href="https://x.com/PointNear_"
+                className="text-moss-300 hover:text-white transition-colors">
                 <Twitter size={20} />
               </a>
             </div>
@@ -56,8 +48,7 @@ export function Footer() {
               <li>
                 <Link
                   to="/buscar"
-                  className="text-moss-200 hover:text-terracotta transition-colors text-sm"
-                >
+                  className="text-moss-200 hover:text-terracotta transition-colors text-sm">
                   Buscar negócios
                 </Link>
               </li>
@@ -65,8 +56,7 @@ export function Footer() {
                 <li>
                   <Link
                     to="/cadastrar"
-                    className="text-moss-200 hover:text-terracotta transition-colors text-sm"
-                  >
+                    className="text-moss-200 hover:text-terracotta transition-colors text-sm">
                     Cadastrar meu negócio
                   </Link>
                 </li>
@@ -74,16 +64,14 @@ export function Footer() {
               <li>
                 <a
                   href="#"
-                  className="text-moss-200 hover:text-terracotta transition-colors text-sm"
-                >
+                  className="text-moss-200 hover:text-terracotta transition-colors text-sm">
                   Como funciona
                 </a>
               </li>
               <li>
                 <a
                   href="#"
-                  className="text-moss-200 hover:text-terracotta transition-colors text-sm"
-                >
+                  className="text-moss-200 hover:text-terracotta transition-colors text-sm">
                   Planos para empresas
                 </a>
               </li>
@@ -98,32 +86,28 @@ export function Footer() {
               <li>
                 <Link
                   to="/buscar?categoria=alimentacao"
-                  className="text-moss-200 hover:text-terracotta transition-colors text-sm"
-                >
+                  className="text-moss-200 hover:text-terracotta transition-colors text-sm">
                   Alimentação
                 </Link>
               </li>
               <li>
                 <Link
                   to="/buscar?categoria=beleza"
-                  className="text-moss-200 hover:text-terracotta transition-colors text-sm"
-                >
+                  className="text-moss-200 hover:text-terracotta transition-colors text-sm">
                   Beleza & Estética
                 </Link>
               </li>
               <li>
                 <Link
                   to="/buscar?categoria=servicos"
-                  className="text-moss-200 hover:text-terracotta transition-colors text-sm"
-                >
+                  className="text-moss-200 hover:text-terracotta transition-colors text-sm">
                   Serviços Gerais
                 </Link>
               </li>
               <li>
                 <Link
                   to="/buscar?categoria=pet"
-                  className="text-moss-200 hover:text-terracotta transition-colors text-sm"
-                >
+                  className="text-moss-200 hover:text-terracotta transition-colors text-sm">
                   Pet Shop
                 </Link>
               </li>
@@ -138,32 +122,28 @@ export function Footer() {
               <li>
                 <a
                   href="#"
-                  className="text-moss-200 hover:text-terracotta transition-colors text-sm"
-                >
+                  className="text-moss-200 hover:text-terracotta transition-colors text-sm">
                   Central de Ajuda
                 </a>
               </li>
               <li>
                 <a
                   href="#"
-                  className="text-moss-200 hover:text-terracotta transition-colors text-sm"
-                >
+                  className="text-moss-200 hover:text-terracotta transition-colors text-sm">
                   Termos de Uso
                 </a>
               </li>
               <li>
                 <a
                   href="#"
-                  className="text-moss-200 hover:text-terracotta transition-colors text-sm"
-                >
+                  className="text-moss-200 hover:text-terracotta transition-colors text-sm">
                   Política de Privacidade
                 </a>
               </li>
               <li>
                 <a
                   href="#"
-                  className="text-moss-200 hover:text-terracotta transition-colors text-sm"
-                >
+                  className="text-moss-200 hover:text-terracotta transition-colors text-sm">
                   Contato
                 </a>
               </li>
