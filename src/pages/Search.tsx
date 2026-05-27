@@ -34,12 +34,10 @@ export function Search() {
   const [query, setQuery] = useState(searchParams.get('q') || '');
   const [location, setLocation] = useState(searchParams.get('local') || '');
   // Filter states
-  const [selectedCategories, setSelectedCategories] = useState<string[]>(
-    searchParams.get('categoria') ? [searchParams.get('categoria')!] : []
-  );
-  const [openNow, setOpenNow] = useState(false);
-  const [minRating, setMinRating] = useState(0);
-  const [sortBy, setSortBy] = useState('relevance');
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(searchParams.getAll('categoria'));
+  const [openNow, setOpenNow] = useState(searchParams.get('openNow') === 'true');
+  const [minRating, setMinRating] = useState(Number(searchParams.get('minRating') ?? 0));
+  const [sortBy, setSortBy] = useState(searchParams.get('sort') || 'featured');
   const [categories, setCategories] = useState<Category[]>([]);
   const [results, setResults] = useState<Business[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -56,7 +54,7 @@ export function Search() {
       .list({
         q: query,
         local: location,
-        categoria: selectedCategories[0],
+        categoria: selectedCategories,
         openNow,
         minRating,
         sort: sortBy,
@@ -75,19 +73,31 @@ export function Search() {
     params.delete('local');
     setSearchParams(params);
   };
+  const updateUrlFilters = (updates: { categorias?: string[]; open?: boolean; rating?: number; sort?: string }) => {
+    const params = new URLSearchParams(searchParams);
+    params.delete('categoria');
+    (updates.categorias ?? selectedCategories).forEach((slug) => params.append('categoria', slug));
+
+    const nextOpenNow = updates.open ?? openNow;
+    if (nextOpenNow) params.set('openNow', 'true');else
+    params.delete('openNow');
+
+    const nextMinRating = updates.rating ?? minRating;
+    if (nextMinRating) params.set('minRating', String(nextMinRating));else
+    params.delete('minRating');
+
+    const nextSort = updates.sort ?? sortBy;
+    if (nextSort && nextSort !== 'featured') params.set('sort', nextSort);else
+    params.delete('sort');
+
+    setSearchParams(params);
+  };
   const toggleCategory = (slug: string) => {
     setSelectedCategories((prev) => {
       const newCategories = prev.includes(slug) ?
       prev.filter((c) => c !== slug) :
       [...prev, slug];
-      // Update URL params
-      const params = new URLSearchParams(searchParams);
-      if (newCategories.length === 1) {
-        params.set('categoria', newCategories[0]);
-      } else {
-        params.delete('categoria'); // Simplified for MVP, not handling array in URL
-      }
-      setSearchParams(params);
+      updateUrlFilters({ categorias: newCategories });
       return newCategories;
     });
   };
@@ -95,7 +105,7 @@ export function Search() {
     setSelectedCategories([]);
     setOpenNow(false);
     setMinRating(0);
-    setSortBy('relevance');
+    setSortBy('featured');
     setSearchParams(new URLSearchParams());
   };
   // Center of São Paulo for map
@@ -133,7 +143,12 @@ export function Search() {
         <h3 className="font-serif font-semibold text-lg mb-4 text-moss-900">
           Filtros Rápidos
         </h3>
-        <label className="flex items-center justify-between cursor-pointer group">
+        <label
+          className="flex items-center justify-between cursor-pointer group"
+          onClick={() => {
+            setOpenNow(!openNow);
+            updateUrlFilters({ open: !openNow });
+          }}>
           <span className="text-charcoal group-hover:text-terracotta transition-colors">
             Aberto agora
           </span>
@@ -158,8 +173,13 @@ export function Search() {
           {[4.5, 4.0, 3.5].map((rating) =>
         <label
           key={rating}
-          className="flex items-center gap-3 cursor-pointer group">
-          
+          className="flex items-center gap-3 cursor-pointer group"
+          onClick={() => {
+            const nextRating = minRating === rating ? 0 : rating;
+            setMinRating(nextRating);
+            updateUrlFilters({ rating: nextRating });
+          }}>
+
               <div
             className={`w-5 h-5 rounded-full border flex items-center justify-center transition-colors ${minRating === rating ? 'border-terracotta' : 'border-moss-300 group-hover:border-terracotta'}`}>
             
@@ -337,12 +357,16 @@ export function Search() {
             <div className="flex items-center gap-4 self-end sm:self-auto">
               <select
                 value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
+                onChange={(e) => {
+                  setSortBy(e.target.value);
+                  updateUrlFilters({ sort: e.target.value });
+                }}
                 className="bg-white border border-moss/20 text-sm rounded-lg px-3 py-2 outline-none focus:border-terracotta text-charcoal">
                 
-                <option value="relevance">Mais relevantes</option>
+                <option value="featured">Destaques</option>
                 <option value="rating">Melhor avaliados</option>
                 <option value="reviews">Mais avaliações</option>
+                <option value="newest">Mais recentes</option>
               </select>
 
               <div className="flex bg-white rounded-lg border border-moss/20 p-1">
@@ -412,15 +436,18 @@ export function Search() {
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
               
-                {results.map((business) =>
+                {results
+                  .map((business) => ({ business, coordinates: business.address.lat != null && business.address.lng != null ? [business.address.lat, business.address.lng] as [number, number] : null }))
+                  .filter((item): item is { business: typeof item.business; coordinates: [number, number] } => Boolean(item.coordinates))
+                  .map(({ business, coordinates }) =>
               <Marker
                 key={business.id}
-                position={[business.address.lat, business.address.lng]}>
-                
+                position={coordinates}>
+
                     <Popup className="custom-popup">
                       <div className="p-1 min-w-[200px]">
                         <img
-                      src={business.photos[0]}
+                      src={business.photos[0] ?? 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=800'}
                       alt={business.name}
                       className="w-full h-24 object-cover rounded-lg mb-2" />
                     

@@ -4,7 +4,7 @@ import { Business, PaginatedResponse } from '../types';
 export interface BusinessSearchParams {
   q?: string;
   local?: string;
-  categoria?: string;
+  categoria?: string | string[];
   openNow?: boolean;
   minRating?: number;
   sort?: string;
@@ -16,9 +16,16 @@ export interface BusinessSearchParams {
 function toQuery(params: BusinessSearchParams) {
   const search = new URLSearchParams();
   Object.entries(params).forEach(([key, value]) => {
-    if (value !== undefined && value !== '' && value !== false) {
-      search.set(key, String(value));
+    if (value === undefined || value === '' || value === false) {
+      return;
     }
+
+    if (Array.isArray(value)) {
+      value.filter(Boolean).forEach((item) => search.append(key, item));
+      return;
+    }
+
+    search.set(key, String(value));
   });
   const query = search.toString();
   return query ? `?${query}` : '';
@@ -36,6 +43,14 @@ export const businessesService = {
 
   async create(payload: unknown) {
     const response = await apiRequest<{ data: Business }>('/businesses', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+    return response.data;
+  },
+
+  async createReview(businessId: string, payload: { rating: number; comment: string; authorName?: string }) {
+    const response = await apiRequest<{ data: Business['reviews'][number] }>(`/businesses/${businessId}/reviews`, {
       method: 'POST',
       body: JSON.stringify(payload),
     });

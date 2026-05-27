@@ -1,31 +1,34 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Search,
   MapPin,
   ArrowRight,
   Store,
   Users,
-  MessageCircle } from
-'lucide-react';
-import { motion } from 'framer-motion';
-import { categoriesService } from '../services/categories.service';
-import { businessesService } from '../services/businesses.service';
-import { Business, Category } from '../types';
-import { CategoryChip } from '../components/CategoryChip';
-import { BusinessCard } from '../components/BusinessCard';
+  MessageCircle,
+} from "lucide-react";
+import { motion } from "framer-motion";
+import { categoriesService } from "../services/categories.service";
+import { businessesService } from "../services/businesses.service";
+import { Business, Category } from "../types";
+import { CategoryChip } from "../components/CategoryChip";
+import { BusinessCard } from "../components/BusinessCard";
+import { useAuth } from "../context/AuthContext";
+
 export function Home() {
   const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [locationQuery, setLocationQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [locationQuery, setLocationQuery] = useState("");
   const [categories, setCategories] = useState<Category[]>([]);
   const [featuredBusinesses, setFeaturedBusinesses] = useState<Business[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { user, isAuthenticated } = useAuth();
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     const params = new URLSearchParams();
-    if (searchQuery) params.append('q', searchQuery);
-    if (locationQuery) params.append('local', locationQuery);
+    if (searchQuery) params.append("q", searchQuery);
+    if (locationQuery) params.append("local", locationQuery);
     navigate(`/buscar?${params.toString()}`);
   };
   useEffect(() => {
@@ -55,36 +58,36 @@ export function Home() {
             <motion.h1
               initial={{
                 opacity: 0,
-                y: 20
+                y: 20,
               }}
               animate={{
                 opacity: 1,
-                y: 0
+                y: 0,
               }}
               transition={{
-                duration: 0.5
+                duration: 0.5,
               }}
-              className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-moss-900 mb-6 leading-tight">
-              
-              Descubra os melhores{' '}
+              className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-moss-900 mb-6 leading-tight"
+            >
+              Descubra os melhores{" "}
               <span className="text-terracotta italic">negócios</span> do seu
               bairro
             </motion.h1>
             <motion.p
               initial={{
                 opacity: 0,
-                y: 20
+                y: 20,
               }}
               animate={{
                 opacity: 1,
-                y: 0
+                y: 0,
               }}
               transition={{
                 duration: 0.5,
-                delay: 0.1
+                delay: 0.1,
               }}
-              className="text-lg md:text-xl text-charcoal-light mb-10">
-              
+              className="text-lg md:text-xl text-charcoal-light mb-10"
+            >
               Apoie o comércio local. Encontre serviços, produtos e experiências
               incríveis pertinho de você.
             </motion.p>
@@ -93,19 +96,19 @@ export function Home() {
             <motion.form
               initial={{
                 opacity: 0,
-                y: 20
+                y: 20,
               }}
               animate={{
                 opacity: 1,
-                y: 0
+                y: 0,
               }}
               transition={{
                 duration: 0.5,
-                delay: 0.2
+                delay: 0.2,
               }}
               onSubmit={handleSearch}
-              className="bg-white p-2 md:p-3 rounded-2xl shadow-float flex flex-col md:flex-row gap-2 md:gap-4 border border-moss/10">
-              
+              className="bg-white p-2 md:p-3 rounded-2xl shadow-float flex flex-col md:flex-row gap-2 md:gap-4 border border-moss/10"
+            >
               <div className="flex-1 flex items-center px-4 bg-moss-50/50 rounded-xl border border-transparent focus-within:border-moss/20 focus-within:bg-white transition-colors">
                 <Search className="text-moss-400 mr-3" size={20} />
                 <input
@@ -113,8 +116,8 @@ export function Home() {
                   placeholder="O que você procura? (ex: padaria, encanador)"
                   className="w-full py-3 md:py-4 bg-transparent outline-none text-charcoal placeholder:text-moss-400"
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)} />
-                
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
               </div>
               <div className="flex-1 flex items-center px-4 bg-moss-50/50 rounded-xl border border-transparent focus-within:border-moss/20 focus-within:bg-white transition-colors">
                 <MapPin className="text-terracotta-400 mr-3" size={20} />
@@ -123,13 +126,13 @@ export function Home() {
                   placeholder="Bairro ou CEP"
                   className="w-full py-3 md:py-4 bg-transparent outline-none text-charcoal placeholder:text-moss-400"
                   value={locationQuery}
-                  onChange={(e) => setLocationQuery(e.target.value)} />
-                
+                  onChange={(e) => setLocationQuery(e.target.value)}
+                />
               </div>
               <button
                 type="submit"
-                className="bg-terracotta hover:bg-terracotta-600 text-white px-8 py-3 md:py-4 rounded-xl font-medium transition-colors shadow-sm flex items-center justify-center gap-2">
-                
+                className="bg-terracotta hover:bg-terracotta-600 text-white px-8 py-3 md:py-4 rounded-xl font-medium transition-colors shadow-sm flex items-center justify-center gap-2"
+              >
                 Buscar
               </button>
             </motion.form>
@@ -138,24 +141,24 @@ export function Home() {
           {/* Categories */}
           <motion.div
             initial={{
-              opacity: 0
+              opacity: 0,
             }}
             animate={{
-              opacity: 1
+              opacity: 1,
             }}
             transition={{
               duration: 0.5,
-              delay: 0.4
+              delay: 0.4,
             }}
-            className="flex flex-wrap justify-center gap-3 max-w-4xl mx-auto">
-            
-            {categories.map((category) =>
-            <CategoryChip
-              key={category.slug}
-              category={category}
-              onClick={() => navigate(`/buscar?categoria=${category.slug}`)} />
-
-            )}
+            className="flex flex-wrap justify-center gap-3 max-w-4xl mx-auto"
+          >
+            {categories.map((category) => (
+              <CategoryChip
+                key={category.slug}
+                category={category}
+                onClick={() => navigate(`/buscar?categoria=${category.slug}`)}
+              />
+            ))}
           </motion.div>
         </div>
       </section>
@@ -173,28 +176,30 @@ export function Home() {
               </p>
             </div>
             <button
-              onClick={() => navigate('/buscar')}
-              className="hidden md:flex items-center gap-2 text-terracotta font-medium hover:text-terracotta-600 transition-colors">
-              
+              onClick={() => navigate("/buscar")}
+              className="hidden md:flex items-center gap-2 text-terracotta font-medium hover:text-terracotta-600 transition-colors"
+            >
               Ver todos <ArrowRight size={18} />
             </button>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {isLoading ? null : featuredBusinesses.map((business, index) =>
-            <BusinessCard
-              key={business.id}
-              business={business}
-              index={index} />
-
-            )}
+            {isLoading
+              ? null
+              : featuredBusinesses.map((business, index) => (
+                  <BusinessCard
+                    key={business.id}
+                    business={business}
+                    index={index}
+                  />
+                ))}
           </div>
 
           <div className="mt-10 text-center md:hidden">
             <button
-              onClick={() => navigate('/buscar')}
-              className="inline-flex items-center gap-2 text-terracotta font-medium hover:text-terracotta-600 transition-colors">
-              
+              onClick={() => navigate("/buscar")}
+              className="inline-flex items-center gap-2 text-terracotta font-medium hover:text-terracotta-600 transition-colors"
+            >
               Ver todos <ArrowRight size={18} />
             </button>
           </div>
@@ -218,26 +223,26 @@ export function Home() {
             <div className="hidden md:block absolute top-12 left-[15%] right-[15%] h-0.5 bg-moss-700 -z-0"></div>
 
             {[
-            {
-              icon: <Search size={32} />,
-              title: 'Busque',
-              desc: 'Encontre o que precisa filtrando por categoria, proximidade ou avaliação.'
-            },
-            {
-              icon: <Store size={32} />,
-              title: 'Encontre',
-              desc: 'Veja fotos, horários, avaliações e os serviços oferecidos pelo estabelecimento.'
-            },
-            {
-              icon: <MessageCircle size={32} />,
-              title: 'Conecte-se',
-              desc: 'Entre em contato direto via WhatsApp ou telefone. Sem taxas ou intermediários.'
-            }].
-            map((step, i) =>
-            <div
-              key={i}
-              className="relative z-10 flex flex-col items-center text-center">
-              
+              {
+                icon: <Search size={32} />,
+                title: "Busque",
+                desc: "Encontre o que precisa filtrando por categoria, proximidade ou avaliação.",
+              },
+              {
+                icon: <Store size={32} />,
+                title: "Encontre",
+                desc: "Veja fotos, horários, avaliações e os serviços oferecidos pelo estabelecimento.",
+              },
+              {
+                icon: <MessageCircle size={32} />,
+                title: "Conecte-se",
+                desc: "Entre em contato direto via WhatsApp ou telefone. Sem taxas ou intermediários.",
+              },
+            ].map((step, i) => (
+              <div
+                key={i}
+                className="relative z-10 flex flex-col items-center text-center"
+              >
                 <div className="w-24 h-24 rounded-full bg-moss-800 border-4 border-moss-900 flex items-center justify-center text-terracotta mb-6 shadow-lg">
                   {step.icon}
                 </div>
@@ -246,7 +251,7 @@ export function Home() {
                 </h3>
                 <p className="text-moss-200">{step.desc}</p>
               </div>
-            )}
+            ))}
           </div>
         </div>
       </section>
@@ -266,14 +271,16 @@ export function Home() {
             gratuitamente e seja encontrado por clientes que estão pertinho de
             você.
           </p>
-          <button
-            onClick={() => navigate('/cadastrar')}
-            className="bg-moss-700 hover:bg-moss-800 text-white px-8 py-4 rounded-xl font-medium text-lg transition-colors shadow-md inline-flex items-center gap-2">
-            
-            Cadastrar meu negócio <Users size={20} />
-          </button>
+          {isAuthenticated && user?.role === "MERCHANT" && (
+            <button
+              onClick={() => navigate("/cadastrar")}
+              className="bg-moss-700 hover:bg-moss-800 text-white px-8 py-4 rounded-xl font-medium text-lg transition-colors shadow-md inline-flex items-center gap-2"
+            >
+              Cadastrar meu negócio <Users size={20} />
+            </button>
+          )}
         </div>
       </section>
-    </div>);
-
+    </div>
+  );
 }

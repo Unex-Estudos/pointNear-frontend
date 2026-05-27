@@ -9,8 +9,6 @@ import {
   MessageCircle,
   Share2,
   ChevronLeft,
-  CheckCircle2,
-  AlertCircle,
   Info,
   Map as MapIcon,
   Calendar,
@@ -20,17 +18,25 @@ import { motion } from 'framer-motion';
 import { businessesService } from '../services/businesses.service';
 import { categoriesService } from '../services/categories.service';
 import { Business, Category } from '../types';
+import { getCurrentWeekDayKey, isBusinessOpenNow } from '../utils/business-hours';
+import { useAuth } from '../context/AuthContext';
 export function BusinessDetail() {
   const { id } = useParams<{
     id: string;
   }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<
     'sobre' | 'servicos' | 'avaliacoes'>(
     'sobre');
   const [business, setBusiness] = useState<Business | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewComment, setReviewComment] = useState('');
+  const [reviewAuthorName, setReviewAuthorName] = useState('');
+  const [reviewError, setReviewError] = useState('');
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -64,17 +70,51 @@ export function BusinessDetail() {
 
   }
   const category = categories.find((c) => c.slug === business.category);
-  const isOpen = !business.hours.segunda.closed; // Simplified mock logic
+  const isOpen = isBusinessOpenNow(business.hours);
+  const heroPhoto = business.photos[0] ?? 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=800';
+  const coordinates = business.address.lat != null && business.address.lng != null ? [business.address.lat, business.address.lng] as [number, number] : null;
   const handleWhatsApp = () => {
     if (business.contact.whatsapp) {
       window.open(`https://wa.me/${business.contact.whatsapp}`, '_blank');
     }
   };
   const handlePhone = () => {
-    window.open(
-      `tel:${business.contact.phone || business.contact.whatsapp}`,
-      '_self'
-    );
+    const phone = business.contact.phone || business.contact.whatsapp;
+    if (phone) {
+      window.open(`tel:${phone}`, '_self');
+    }
+  };
+  const handleReviewSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setReviewError('');
+
+    if (reviewComment.trim().length < 3) {
+      setReviewError('Escreva um comentário com pelo menos 3 caracteres.');
+      return;
+    }
+
+    if (!user && reviewAuthorName.trim().length < 2) {
+      setReviewError('Informe seu nome para enviar a avaliação.');
+      return;
+    }
+
+    setIsSubmittingReview(true);
+    try {
+      await businessesService.createReview(business.id, {
+        rating: reviewRating,
+        comment: reviewComment.trim(),
+        authorName: user ? undefined : reviewAuthorName.trim(),
+      });
+      const updatedBusiness = await businessesService.getById(business.id);
+      setBusiness(updatedBusiness);
+      setReviewComment('');
+      setReviewAuthorName('');
+      setReviewRating(5);
+    } catch (err) {
+      setReviewError(err instanceof Error ? err.message : 'Não foi possível enviar sua avaliação.');
+    } finally {
+      setIsSubmittingReview(false);
+    }
   };
   const daysOfWeek = [
   {
@@ -106,7 +146,7 @@ export function BusinessDetail() {
     label: 'Domingo'
   }];
 
-  const today = 'segunda'; // Mock current day
+  const today = getCurrentWeekDayKey();
   return (
     <div className="min-h-screen bg-cream pb-24 md:pb-12">
       {/* Mobile Back Button */}
@@ -123,7 +163,7 @@ export function BusinessDetail() {
       <div className="h-64 md:h-96 w-full relative flex gap-1 md:gap-2 bg-moss-900">
         <div className="w-full md:w-2/3 h-full relative">
           <img
-            src={business.photos[0]}
+            src={heroPhoto}
             alt={business.name}
             className="w-full h-full object-cover" />
           
@@ -154,13 +194,11 @@ export function BusinessDetail() {
             {/* Header Card */}
             <div className="bg-white rounded-3xl p-6 md:p-8 shadow-float mb-8 border border-moss/5">
               <div className="flex flex-wrap items-center gap-3 mb-4">
-                {category &&
                 <span
-                  className={`px-3 py-1 rounded-full text-xs font-semibold ${category.color}`}>
-                  
-                    {category.label}
+                  className={`px-3 py-1 rounded-full text-xs font-semibold ${category?.color ?? 'bg-moss-100 text-moss-700'}`}>
+
+                    {category?.label ?? business.categoryLabel ?? business.category}
                   </span>
-                }
                 <span
                   className={`px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1 ${isOpen ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}`}>
                   
@@ -196,14 +234,16 @@ export function BusinessDetail() {
               <div className="hidden md:flex gap-4 border-t border-moss/10 pt-6">
                 <button
                   onClick={handleWhatsApp}
-                  className="flex-1 bg-whatsapp hover:bg-[#20bd5a] text-white py-3.5 rounded-xl font-medium flex items-center justify-center gap-2 transition-colors shadow-sm">
+                  disabled={!business.contact.whatsapp}
+                  className="flex-1 bg-whatsapp hover:bg-[#20bd5a] disabled:bg-moss-200 disabled:text-moss-500 disabled:cursor-not-allowed text-white py-3.5 rounded-xl font-medium flex items-center justify-center gap-2 transition-colors shadow-sm">
                   
                   <MessageCircle size={20} />
                   Chamar no WhatsApp
                 </button>
                 <button
                   onClick={handlePhone}
-                  className="flex-1 bg-white border-2 border-moss-200 hover:border-moss-300 text-moss-800 py-3.5 rounded-xl font-medium flex items-center justify-center gap-2 transition-colors">
+                  disabled={!business.contact.phone && !business.contact.whatsapp}
+                  className="flex-1 bg-white border-2 border-moss-200 hover:border-moss-300 disabled:bg-moss-50 disabled:text-moss-400 disabled:cursor-not-allowed text-moss-800 py-3.5 rounded-xl font-medium flex items-center justify-center gap-2 transition-colors">
                   
                   <Phone size={20} />
                   Ligar
@@ -291,30 +331,37 @@ export function BusinessDetail() {
                         {business.address.neighborhood} -{' '}
                         {business.address.city}, {business.address.state}
                       </p>
-                      <div className="h-48 rounded-xl overflow-hidden mb-4 relative z-0">
-                        <MapContainer
-                        center={[business.address.lat, business.address.lng]}
-                        zoom={15}
-                        scrollWheelZoom={false}
-                        className="w-full h-full">
-                        
-                          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                          <Marker
-                          position={[
-                          business.address.lat,
-                          business.address.lng]
-                          } />
-                        
-                        </MapContainer>
+                      {coordinates ?
+                      <>
+                        <div className="h-48 rounded-xl overflow-hidden mb-4 relative z-0">
+                          <MapContainer
+                          center={coordinates}
+                          zoom={15}
+                          scrollWheelZoom={false}
+                          className="w-full h-full">
+
+                            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                            <Marker
+                            position={[
+                            coordinates[0],
+                            coordinates[1]]
+                            } />
+
+                          </MapContainer>
+                        </div>
+                        <a
+                        href={`https://maps.google.com/?q=${coordinates[0]},${coordinates[1]}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block w-full text-center bg-moss-50 hover:bg-moss-100 text-moss-800 py-2.5 rounded-xl font-medium transition-colors text-sm">
+
+                          Como chegar
+                        </a>
+                      </> :
+                      <div className="rounded-xl bg-moss-50 p-4 text-sm text-charcoal-light text-center">
+                        Mapa indisponível para este endereço.
                       </div>
-                      <a
-                      href={`https://maps.google.com/?q=${business.address.lat},${business.address.lng}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block w-full text-center bg-moss-50 hover:bg-moss-100 text-moss-800 py-2.5 rounded-xl font-medium transition-colors text-sm">
-                      
-                        Como chegar
-                      </a>
+                      }
                     </div>
                   </section>
 
@@ -463,6 +510,42 @@ export function BusinessDetail() {
                     </div>
                   </div>
 
+                  <form onSubmit={handleReviewSubmit} className="bg-white p-5 rounded-2xl shadow-sm border border-moss/10 mb-6 space-y-4">
+                    <h3 className="font-serif font-bold text-moss-900 text-lg">Deixe sua avaliação</h3>
+                    {!user &&
+                    <input
+                      type="text"
+                      value={reviewAuthorName}
+                      onChange={(event) => setReviewAuthorName(event.target.value)}
+                      placeholder="Seu nome"
+                      className="w-full border border-moss/20 rounded-xl px-4 py-3 outline-none focus:border-terracotta bg-white" />
+                    }
+                    <div className="flex items-center gap-2">
+                      {[1, 2, 3, 4, 5].map((rating) =>
+                      <button
+                        key={rating}
+                        type="button"
+                        onClick={() => setReviewRating(rating)}
+                        className="text-yellow-400">
+                        <Star size={24} className={rating <= reviewRating ? 'fill-current' : 'text-moss-200'} />
+                      </button>
+                      )}
+                    </div>
+                    <textarea
+                      value={reviewComment}
+                      onChange={(event) => setReviewComment(event.target.value)}
+                      placeholder="Conte como foi sua experiência"
+                      rows={4}
+                      className="w-full border border-moss/20 rounded-xl px-4 py-3 outline-none focus:border-terracotta bg-white resize-none" />
+                    {reviewError && <p className="text-sm text-red-600">{reviewError}</p>}
+                    <button
+                      type="submit"
+                      disabled={isSubmittingReview}
+                      className="bg-terracotta hover:bg-terracotta-600 disabled:bg-moss-200 disabled:text-moss-500 text-white px-5 py-3 rounded-xl font-medium transition-colors">
+                      {isSubmittingReview ? 'Enviando...' : 'Enviar avaliação'}
+                    </button>
+                  </form>
+
                   <div className="space-y-4">
                     {business.reviews.length > 0 ?
                   business.reviews.map((review) =>
@@ -530,27 +613,34 @@ export function BusinessDetail() {
                 {business.address.neighborhood} - {business.address.city},{' '}
                 {business.address.state}
               </p>
-              <div className="h-40 rounded-xl overflow-hidden mb-4 relative z-0">
-                <MapContainer
-                  center={[business.address.lat, business.address.lng]}
-                  zoom={15}
-                  scrollWheelZoom={false}
-                  className="w-full h-full">
-                  
-                  <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                  <Marker
-                    position={[business.address.lat, business.address.lng]} />
-                  
-                </MapContainer>
+              {coordinates ?
+              <>
+                <div className="h-40 rounded-xl overflow-hidden mb-4 relative z-0">
+                  <MapContainer
+                    center={coordinates}
+                    zoom={15}
+                    scrollWheelZoom={false}
+                    className="w-full h-full">
+
+                    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                    <Marker
+                      position={coordinates} />
+
+                  </MapContainer>
+                </div>
+                <a
+                  href={`https://maps.google.com/?q=${coordinates[0]},${coordinates[1]}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block w-full text-center bg-moss-50 hover:bg-moss-100 text-moss-800 py-2 rounded-xl font-medium transition-colors text-sm">
+
+                  Como chegar
+                </a>
+              </> :
+              <div className="rounded-xl bg-moss-50 p-4 text-sm text-charcoal-light text-center">
+                Mapa indisponível para este endereço.
               </div>
-              <a
-                href={`https://maps.google.com/?q=${business.address.lat},${business.address.lng}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block w-full text-center bg-moss-50 hover:bg-moss-100 text-moss-800 py-2 rounded-xl font-medium transition-colors text-sm">
-                
-                Como chegar
-              </a>
+              }
 
               <hr className="my-5 border-moss/10" />
 
@@ -591,14 +681,16 @@ export function BusinessDetail() {
       <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-moss/10 p-4 shadow-[0_-10px_20px_rgba(0,0,0,0.05)] z-50 flex gap-3">
         <button
           onClick={handleWhatsApp}
-          className="flex-1 bg-whatsapp hover:bg-[#20bd5a] text-white py-3.5 rounded-xl font-medium flex items-center justify-center gap-2 transition-colors shadow-sm">
+          disabled={!business.contact.whatsapp}
+          className="flex-1 bg-whatsapp hover:bg-[#20bd5a] disabled:bg-moss-200 disabled:text-moss-500 disabled:cursor-not-allowed text-white py-3.5 rounded-xl font-medium flex items-center justify-center gap-2 transition-colors shadow-sm">
           
           <MessageCircle size={20} />
           WhatsApp
         </button>
         <button
           onClick={handlePhone}
-          className="w-14 bg-moss-50 text-moss-800 rounded-xl flex items-center justify-center transition-colors">
+          disabled={!business.contact.phone && !business.contact.whatsapp}
+          className="w-14 bg-moss-50 disabled:bg-moss-100 disabled:text-moss-400 disabled:cursor-not-allowed text-moss-800 rounded-xl flex items-center justify-center transition-colors">
           
           <Phone size={20} />
         </button>

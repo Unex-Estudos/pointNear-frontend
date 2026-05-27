@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { MerchantDashboard, merchantService } from '../services/merchant.service';
 
 export function Dashboard() {
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
   const [data, setData] = useState<MerchantDashboard | null>(null);
   const [error, setError] = useState('');
 
@@ -14,6 +14,10 @@ export function Dashboard() {
       merchantService.dashboard().then(setData).catch((err) => setError(err.message));
     }
   }, [user]);
+
+  if (isLoading) {
+    return <div className="min-h-screen bg-cream flex items-center justify-center text-charcoal-light">Carregando dashboard...</div>;
+  }
 
   if (!user) {
     return <div className="min-h-screen bg-cream flex items-center justify-center"><Link to="/login" className="text-terracotta font-medium">Entrar para acessar o dashboard</Link></div>;

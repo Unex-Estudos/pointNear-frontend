@@ -2,17 +2,15 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { MapPin, Star, Clock } from 'lucide-react';
 import { Business } from '../types';
-import { categories } from '../data/categories';
 import { motion } from 'framer-motion';
+import { isBusinessOpenNow } from '../utils/business-hours';
 interface BusinessCardProps {
   business: Business;
   index?: number;
 }
 export function BusinessCard({ business, index = 0 }: BusinessCardProps) {
-  const category = categories.find((c) => c.slug === business.category);
-  // Simple mock logic for open/closed based on current time could go here,
-  // but we'll just mock it as mostly open for the MVP
-  const isOpen = !business.hours.segunda.closed; // Simplification
+  const isOpen = isBusinessOpenNow(business.hours);
+  const photo = business.photos[0] ?? 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=800';
   return (
     <motion.div
       initial={{
@@ -34,21 +32,17 @@ export function BusinessCard({ business, index = 0 }: BusinessCardProps) {
           {/* Image Header */}
           <div className="relative h-48 overflow-hidden bg-moss-100">
             <img
-              src={business.photos[0]}
+              src={photo}
               alt={business.name}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
             
 
             {/* Category Badge */}
-            {category &&
             <div className="absolute top-3 left-3">
-                <span
-                className={`px-2.5 py-1 rounded-full text-xs font-semibold shadow-sm backdrop-blur-md bg-white/90 ${category.color.split(' ')[1]}`}>
-                
-                  {category.label}
-                </span>
-              </div>
-            }
+              <span className="px-2.5 py-1 rounded-full text-xs font-semibold shadow-sm backdrop-blur-md bg-white/90 text-moss-700">
+                {business.categoryLabel ?? business.category}
+              </span>
+            </div>
 
             {/* Status Pill */}
             <div className="absolute top-3 right-3">

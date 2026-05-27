@@ -1,7 +1,11 @@
 import React from "react";
 import { Store, Instagram, Facebook, Twitter } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+
 export function Footer() {
+  const { user, isAuthenticated } = useAuth();
+
   return (
     <footer className="bg-moss-900 text-moss-50 pt-16 pb-8 border-t border-moss-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -57,14 +61,16 @@ export function Footer() {
                   Buscar negócios
                 </Link>
               </li>
-              <li>
-                <Link
-                  to="/cadastrar"
-                  className="text-moss-200 hover:text-terracotta transition-colors text-sm"
-                >
-                  Cadastrar meu negócio
-                </Link>
-              </li>
+              {isAuthenticated && user?.role === "MERCHANT" && (
+                <li>
+                  <Link
+                    to="/cadastrar"
+                    className="text-moss-200 hover:text-terracotta transition-colors text-sm"
+                  >
+                    Cadastrar meu negócio
+                  </Link>
+                </li>
+              )}
               <li>
                 <a
                   href="#"

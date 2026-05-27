@@ -1,5 +1,11 @@
 const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3333/api/v1';
 
+interface RefreshResponse {
+  data: {
+    accessToken: string;
+  };
+}
+
 export class ApiError extends Error {
   constructor(
     message: string,
@@ -22,8 +28,40 @@ export function setAccessToken(token: string | null) {
   }
 }
 
-export async function apiRequest<T>(path: string, options: RequestInit = {}): Promise<T> {
-  const token = getAccessToken();
+let refreshPromise: Promise<string | null> | null = null;
+
+async function refreshAccessToken() {
+  if (!refreshPromise) {
+    refreshPromise = fetch(`${API_URL}/auth/refresh`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({}),
+      credentials: 'include',
+    })
+      .then(async (response) => {
+        const payload = (await response.json().catch(() => null)) as RefreshResponse | null;
+
+        if (!response.ok || !payload?.data?.accessToken) {
+          setAccessToken(null);
+          return null;
+        }
+
+        setAccessToken(payload.data.accessToken);
+        return payload.data.accessToken;
+      })
+      .catch(() => {
+        setAccessToken(null);
+        return null;
+      })
+      .finally(() => {
+        refreshPromise = null;
+      });
+  }
+
+  return refreshPromise;
+}
+
+async function request(path: string, options: RequestInit = {}, token = getAccessToken()): Promise<Response> {
   const headers = new Headers(options.headers);
 
   if (!headers.has('Content-Type') && options.body) {
@@ -34,12 +72,14 @@ export async function apiRequest<T>(path: string, options: RequestInit = {}): Pr
     headers.set('Authorization', `Bearer ${token}`);
   }
 
-  const response = await fetch(`${API_URL}${path}`, {
+  return fetch(`${API_URL}${path}`, {
     ...options,
     headers,
     credentials: 'include',
   });
+}
 
+async function parseResponse<T>(response: Response): Promise<T> {
   if (response.status === 204) {
     return undefined as T;
   }
@@ -51,4 +91,18 @@ export async function apiRequest<T>(path: string, options: RequestInit = {}): Pr
   }
 
   return payload as T;
+}
+
+export async function apiRequest<T>(path: string, options: RequestInit = {}): Promise<T> {
+  let response = await request<T>(path, options);
+
+  if (response.status === 401 && path !== '/auth/refresh') {
+    const token = await refreshAccessToken();
+
+    if (token) {
+      response = await request<T>(path, options, token);
+    }
+  }
+
+  return parseResponse<T>(response);
 }

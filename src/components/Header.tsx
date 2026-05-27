@@ -15,11 +15,14 @@ export function Header() {
       name: "Buscar",
       path: "/buscar",
     },
-    {
+  ];
+
+  if (isAuthenticated && user?.role === "MERCHANT") {
+    navLinks.push({
       name: "Cadastrar meu negócio",
       path: "/cadastrar",
-    },
-  ];
+    });
+  }
 
   const isActive = (path: string) => {
     if (path === "/" && location.pathname !== "/") return false;
@@ -56,15 +59,24 @@ export function Header() {
           <div className="hidden md:flex items-center gap-4">
             {isAuthenticated ? (
               <>
-                <Link to={user?.role === 'ADMIN' ? '/admin' : '/dashboard'} className="text-sm font-medium text-charcoal-light hover:text-moss transition-colors">
+                <Link
+                  to={user?.role === "ADMIN" ? "/admin" : "/dashboard"}
+                  className="text-sm font-medium text-charcoal-light hover:text-moss transition-colors"
+                >
                   Dashboard
                 </Link>
-                <button onClick={logout} className="text-sm font-medium text-charcoal-light hover:text-moss transition-colors">
+                <button
+                  onClick={logout}
+                  className="text-sm font-medium text-charcoal-light hover:text-moss transition-colors"
+                >
                   Sair
                 </button>
               </>
             ) : (
-              <Link to="/login" className="text-sm font-medium text-charcoal-light hover:text-moss transition-colors">
+              <Link
+                to="/login"
+                className="text-sm font-medium text-charcoal-light hover:text-moss transition-colors"
+              >
                 Entrar
               </Link>
             )}
@@ -98,13 +110,16 @@ export function Header() {
               {isAuthenticated ? (
                 <>
                   <Link
-                    to={user?.role === 'ADMIN' ? '/admin' : '/dashboard'}
+                    to={user?.role === "ADMIN" ? "/admin" : "/dashboard"}
                     onClick={() => setIsMobileMenuOpen(false)}
                     className="block px-3 py-3 text-base font-medium text-charcoal-light hover:text-moss"
                   >
                     Dashboard
                   </Link>
-                  <button onClick={logout} className="w-full text-left px-3 py-3 text-base font-medium text-charcoal-light hover:text-moss">
+                  <button
+                    onClick={logout}
+                    className="w-full text-left px-3 py-3 text-base font-medium text-charcoal-light hover:text-moss"
+                  >
                     Sair
                   </button>
                 </>

@@ -11,7 +11,7 @@ export type CategorySlug =
 'lazer';
 
 export interface Category {
-  slug: CategorySlug;
+  slug: string;
   label: string;
   iconName: string;
   color: string;
@@ -77,6 +77,7 @@ export interface Business {
   subcategories: string[];
   description: string;
   photos: string[];
+  categoryLabel?: string;
   address: {
     street: string;
     number: string;
@@ -84,14 +85,14 @@ export interface Business {
     city: string;
     state: string;
     zip: string;
-    lat: number;
-    lng: number;
+    lat?: number | null;
+    lng?: number | null;
   };
   contact: {
-    phone?: string;
-    whatsapp: string;
-    instagram?: string;
-    email?: string;
+    phone?: string | null;
+    whatsapp?: string | null;
+    instagram?: string | null;
+    email?: string | null;
   };
   hours: WeeklyHours;
   rating: number;

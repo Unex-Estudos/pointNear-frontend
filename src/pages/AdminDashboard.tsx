@@ -6,7 +6,7 @@ import { AdminDashboardData, adminService } from '../services/admin.service';
 import { Business } from '../types';
 
 export function AdminDashboard() {
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
   const [dashboard, setDashboard] = useState<AdminDashboardData | null>(null);
   const [pending, setPending] = useState<Business[]>([]);
   const [error, setError] = useState('');
@@ -21,6 +21,10 @@ export function AdminDashboard() {
       load().catch((err) => setError(err.message));
     }
   }, [user]);
+
+  if (isLoading) {
+    return <div className="min-h-screen bg-cream flex items-center justify-center text-charcoal-light">Carregando administração...</div>;
+  }
 
   if (!user) {
     return <div className="min-h-screen bg-cream flex items-center justify-center"><Link to="/login" className="text-terracotta font-medium">Entrar como admin</Link></div>;

@@ -624,15 +624,15 @@ export function Register() {
               Cadastro realizado com sucesso!
             </h2>
             <p className="text-charcoal-light max-w-md mx-auto mb-8">
-              Seu negócio já está visível para os moradores da região. Você
-              receberá um e-mail com as instruções para acessar seu painel.
+              Seu negócio foi enviado para análise e ficará visível na busca
+              após aprovação da administração.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
               onClick={() => navigate('/buscar')}
               className="bg-moss-800 hover:bg-moss-900 text-white px-8 py-3 rounded-xl font-medium transition-colors">
               
-                Ver na busca
+                Buscar negócios
               </button>
               <button
               onClick={() => navigate('/')}

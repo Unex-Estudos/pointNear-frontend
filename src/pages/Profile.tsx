@@ -3,7 +3,11 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 export function Profile() {
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
+
+  if (isLoading) {
+    return <div className="min-h-screen bg-cream flex items-center justify-center text-charcoal-light">Carregando perfil...</div>;
+  }
 
   if (!user) {
     return <div className="min-h-screen bg-cream flex items-center justify-center"><Link to="/login" className="text-terracotta font-medium">Entrar para ver perfil</Link></div>;
