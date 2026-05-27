@@ -67,8 +67,7 @@ export function Home() {
               transition={{
                 duration: 0.5,
               }}
-              className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-moss-900 mb-6 leading-tight"
-            >
+              className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-moss-900 mb-6 leading-tight">
               Descubra os melhores{" "}
               <span className="text-terracotta italic">negócios</span> do seu
               bairro
@@ -86,8 +85,7 @@ export function Home() {
                 duration: 0.5,
                 delay: 0.1,
               }}
-              className="text-lg md:text-xl text-charcoal-light mb-10"
-            >
+              className="text-lg md:text-xl text-charcoal-light mb-10">
               Apoie o comércio local. Encontre serviços, produtos e experiências
               incríveis pertinho de você.
             </motion.p>
@@ -107,8 +105,7 @@ export function Home() {
                 delay: 0.2,
               }}
               onSubmit={handleSearch}
-              className="bg-white p-2 md:p-3 rounded-2xl shadow-float flex flex-col md:flex-row gap-2 md:gap-4 border border-moss/10"
-            >
+              className="bg-white p-2 md:p-3 rounded-2xl shadow-float flex flex-col md:flex-row gap-2 md:gap-4 border border-moss/10">
               <div className="flex-1 flex items-center px-4 bg-moss-50/50 rounded-xl border border-transparent focus-within:border-moss/20 focus-within:bg-white transition-colors">
                 <Search className="text-moss-400 mr-3" size={20} />
                 <input
@@ -131,8 +128,7 @@ export function Home() {
               </div>
               <button
                 type="submit"
-                className="bg-terracotta hover:bg-terracotta-600 text-white px-8 py-3 md:py-4 rounded-xl font-medium transition-colors shadow-sm flex items-center justify-center gap-2"
-              >
+                className="bg-terracotta hover:bg-terracotta-600 text-white px-8 py-3 md:py-4 rounded-xl font-medium transition-colors shadow-sm flex items-center justify-center gap-2">
                 Buscar
               </button>
             </motion.form>
@@ -150,8 +146,7 @@ export function Home() {
               duration: 0.5,
               delay: 0.4,
             }}
-            className="flex flex-wrap justify-center gap-3 max-w-4xl mx-auto"
-          >
+            className="flex flex-wrap justify-center gap-3 max-w-4xl mx-auto">
             {categories.map((category) => (
               <CategoryChip
                 key={category.slug}
@@ -177,8 +172,7 @@ export function Home() {
             </div>
             <button
               onClick={() => navigate("/buscar")}
-              className="hidden md:flex items-center gap-2 text-terracotta font-medium hover:text-terracotta-600 transition-colors"
-            >
+              className="hidden md:flex items-center gap-2 text-terracotta font-medium hover:text-terracotta-600 transition-colors">
               Ver todos <ArrowRight size={18} />
             </button>
           </div>
@@ -198,8 +192,7 @@ export function Home() {
           <div className="mt-10 text-center md:hidden">
             <button
               onClick={() => navigate("/buscar")}
-              className="inline-flex items-center gap-2 text-terracotta font-medium hover:text-terracotta-600 transition-colors"
-            >
+              className="inline-flex items-center gap-2 text-terracotta font-medium hover:text-terracotta-600 transition-colors">
               Ver todos <ArrowRight size={18} />
             </button>
           </div>
@@ -241,8 +234,7 @@ export function Home() {
             ].map((step, i) => (
               <div
                 key={i}
-                className="relative z-10 flex flex-col items-center text-center"
-              >
+                className="relative z-10 flex flex-col items-center text-center">
                 <div className="w-24 h-24 rounded-full bg-moss-800 border-4 border-moss-900 flex items-center justify-center text-terracotta mb-6 shadow-lg">
                   {step.icon}
                 </div>
@@ -274,8 +266,7 @@ export function Home() {
           {isAuthenticated && user?.role === "MERCHANT" && (
             <button
               onClick={() => navigate("/cadastrar")}
-              className="bg-moss-700 hover:bg-moss-800 text-white px-8 py-4 rounded-xl font-medium text-lg transition-colors shadow-md inline-flex items-center gap-2"
-            >
+              className="bg-moss-700 hover:bg-moss-800 text-white px-8 py-4 rounded-xl font-medium text-lg transition-colors shadow-md inline-flex items-center gap-2">
               Cadastrar meu negócio <Users size={20} />
             </button>
           )}

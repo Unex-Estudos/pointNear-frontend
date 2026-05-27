@@ -8,8 +8,8 @@ export function Login() {
   const { login, register, user } = useAuth();
   const [isRegistering, setIsRegistering] = useState(false);
   const [name, setName] = useState("");
-  const [email, setEmail] = useState("admin@pointnear.local");
-  const [password, setPassword] = useState("Admin123!");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [role, setRole] = useState<"CUSTOMER" | "MERCHANT">("CUSTOMER");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -38,8 +38,7 @@ export function Login() {
     <div className="min-h-screen bg-cream flex items-center justify-center px-4 py-12">
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-md bg-white rounded-3xl shadow-soft border border-moss/5 p-8"
-      >
+        className="w-full max-w-md bg-white rounded-3xl shadow-soft border border-moss/5 p-8">
         <div className="flex items-center gap-3 mb-8">
           <div className="bg-terracotta text-white p-2 rounded-xl">
             <Store size={24} />
@@ -101,8 +100,7 @@ export function Login() {
               onChange={(e) =>
                 setRole(e.target.value as "CUSTOMER" | "MERCHANT")
               }
-              className="w-full px-4 py-3 rounded-xl border border-moss-200 outline-none focus:border-terracotta"
-            >
+              className="w-full px-4 py-3 rounded-xl border border-moss-200 outline-none focus:border-terracotta">
               <option value="CUSTOMER">Consumidor</option>
               <option value="MERCHANT">Comerciante</option>
             </select>
@@ -113,22 +111,16 @@ export function Login() {
 
         <button
           disabled={isSubmitting}
-          className="w-full bg-moss-800 hover:bg-moss-900 text-white py-3 rounded-xl font-medium transition-colors disabled:opacity-70"
-        >
+          className="w-full bg-moss-800 hover:bg-moss-900 text-white py-3 rounded-xl font-medium transition-colors disabled:opacity-70">
           {isSubmitting ? "Aguarde..." : isRegistering ? "Cadastrar" : "Entrar"}
         </button>
 
         <button
           type="button"
           onClick={() => setIsRegistering((value) => !value)}
-          className="w-full mt-4 text-sm text-terracotta font-medium"
-        >
+          className="w-full mt-4 text-sm text-terracotta font-medium">
           {isRegistering ? "Já tenho conta" : "Criar uma conta"}
         </button>
-
-        <p className="text-xs text-charcoal-light mt-6 text-center">
-          Demo: admin@pointnear.local / Admin123!
-        </p>
         <Link to="/" className="block text-center text-sm text-moss-600 mt-4">
           Voltar ao início
         </Link>
