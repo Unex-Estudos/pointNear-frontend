@@ -9,7 +9,7 @@ interface Props {
 
 export function MobileContactBar({ contact, onWhatsApp, onPhone }: Props) {
   return (
-    <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-moss/10 p-4 shadow-[0_-10px_20px_rgba(0,0,0,0.05)] z-50 flex gap-3">
+    <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-dark-surface border-t border-moss/10 dark:border-dark-border p-4 shadow-[0_-10px_20px_rgba(0,0,0,0.05)] z-50 flex gap-3">
       <button
         onClick={onWhatsApp}
         disabled={!contact.whatsapp}
@@ -19,7 +19,7 @@ export function MobileContactBar({ contact, onWhatsApp, onPhone }: Props) {
       <button
         onClick={onPhone}
         disabled={!contact.phone && !contact.whatsapp}
-        className="w-14 bg-moss-50 disabled:bg-moss-100 disabled:text-moss-400 disabled:cursor-not-allowed text-moss-800 rounded-xl flex items-center justify-center transition-colors">
+        className="w-14 bg-moss-50 dark:bg-dark-elevated disabled:bg-moss-100 dark:disabled:bg-dark-elevated disabled:text-moss-400 dark:disabled:text-dark-muted disabled:cursor-not-allowed text-moss-800 dark:text-dark-text rounded-xl flex items-center justify-center transition-colors">
         <Phone size={20} />
       </button>
     </div>

@@ -42,7 +42,7 @@ export function BusinessDetail() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-cream text-charcoal-light">
+      <div className="min-h-screen flex items-center justify-center bg-cream dark:bg-dark-bg text-charcoal-light dark:text-dark-muted">
         Carregando estabelecimento...
       </div>
     );
@@ -50,7 +50,7 @@ export function BusinessDetail() {
 
   if (!business) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-cream p-4 text-center">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-cream dark:bg-dark-bg p-4 text-center">
         <h2 className="text-2xl font-serif font-bold text-moss-900 mb-4">
           Estabelecimento não encontrado
         </h2>
@@ -85,11 +85,11 @@ export function BusinessDetail() {
   };
 
   return (
-    <div className="min-h-screen bg-cream pb-24 md:pb-12">
+    <div className="min-h-screen bg-cream dark:bg-dark-bg pb-24 md:pb-12 text-charcoal dark:text-dark-text">
       <div className="md:hidden fixed top-4 left-4 z-50">
         <button
           onClick={() => navigate(-1)}
-          className="bg-white/90 backdrop-blur-md p-2 rounded-full shadow-md text-moss-900"
+          className="bg-white/90 dark:bg-dark-surface/90 backdrop-blur-md p-2 rounded-full shadow-md text-moss-900 dark:text-dark-text"
         >
           <ChevronLeft size={24} />
         </button>

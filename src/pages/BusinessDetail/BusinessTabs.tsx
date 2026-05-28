@@ -26,15 +26,15 @@ export function BusinessTabs({ business, category, coordinates, currentUserId, o
   return (
     <>
       {/* Navigation */}
-      <div className="flex overflow-x-auto hide-scrollbar border-b border-moss/20 mb-8 sticky top-16 bg-cream/90 backdrop-blur-md z-30 pt-2">
+      <div className="flex overflow-x-auto hide-scrollbar border-b border-moss/20 dark:border-dark-border mb-8 sticky top-16 bg-cream/90 dark:bg-dark-bg/95 backdrop-blur-md z-30 pt-2">
         {TABS.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={`px-6 py-4 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
               activeTab === tab.id
-                ? 'border-terracotta text-terracotta'
-                : 'border-transparent text-charcoal-light hover:text-moss-700'
+                ? 'border-terracotta text-terracotta dark:text-terracotta-300'
+                : 'border-transparent text-charcoal-light dark:text-dark-muted hover:text-moss-700 dark:hover:text-dark-text'
             }`}>
             {tab.label}
           </button>

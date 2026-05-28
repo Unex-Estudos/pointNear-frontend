@@ -38,7 +38,7 @@ export function Header() {
             <div className="bg-terracotta text-white p-1.5 rounded-lg group-hover:bg-terracotta-600 transition-colors">
               <Store size={24} />
             </div>
-            <span className="font-serif text-xl font-bold text-moss-800">
+            <span className="font-serif text-xl font-bold text-moss-800 dark:text-dark-text">
               Point<span className="text-terracotta">Near</span>
             </span>
           </Link>
@@ -49,7 +49,7 @@ export function Header() {
               <Link
                 key={link.path}
                 to={link.path}
-                className={`text-sm font-medium transition-colors hover:text-terracotta ${isActive(link.path) ? "text-terracotta" : "text-charcoal-light dark:text-dark-text"}`}>
+                className={`text-sm font-medium transition-colors hover:text-terracotta dark:hover:text-terracotta-300 ${isActive(link.path) ? "text-terracotta dark:text-terracotta-300" : "text-charcoal-light dark:text-dark-muted"}`}>
                 {link.name}
               </Link>
             ))}
@@ -62,19 +62,19 @@ export function Header() {
               <>
                 <Link
                   to={user?.role === "ADMIN" ? "/admin" : "/dashboard"}
-                  className="text-sm font-medium text-charcoal-light hover:text-moss transition-colors dark:text-dark-text dark:hover:text-moss">
+                  className="text-sm font-medium text-charcoal-light hover:text-terracotta transition-colors dark:text-dark-muted dark:hover:text-terracotta-300">
                   Dashboard
                 </Link>
                 <button
                   onClick={logout}
-                  className="text-sm font-medium text-charcoal-light hover:text-moss transition-colors dark:text-dark-text dark:hover:text-moss">
+                  className="text-sm font-medium text-charcoal-light hover:text-terracotta transition-colors dark:text-dark-muted dark:hover:text-terracotta-300">
                   Sair
                 </button>
               </>
             ) : (
               <Link
                 to="/login"
-                className="text-sm font-medium text-charcoal-light hover:text-moss transition-colors dark:text-dark-text dark:hover:text-moss">
+                className="text-sm font-medium text-charcoal-light hover:text-terracotta transition-colors dark:text-dark-muted dark:hover:text-terracotta-300">
                 Entrar
               </Link>
             )}
@@ -82,7 +82,7 @@ export function Header() {
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden p-2 text-charcoal-light hover:text-moss dark:text-dark-text dark:hover:text-moss"
+            className="md:hidden p-2 text-charcoal-light hover:text-terracotta dark:text-dark-muted dark:hover:text-terracotta-300"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -97,7 +97,7 @@ export function Header() {
               <Link
                 key={link.path}
                 to={link.path}
-                className={`block px-3 py-3 rounded-md text-base font-medium ${isActive(link.path) ? "bg-terracotta/10 text-terracotta" : "text-charcoal-light dark:text-dark-text hover:bg-moss/5 hover:text-moss dark:hover:bg-dark-surface dark:hover:text-moss"}`}
+                className={`block px-3 py-3 rounded-md text-base font-medium ${isActive(link.path) ? "bg-terracotta/10 text-terracotta dark:bg-terracotta/15 dark:text-terracotta-300" : "text-charcoal-light dark:text-dark-muted hover:bg-moss/5 hover:text-terracotta dark:hover:bg-dark-elevated dark:hover:text-terracotta-300"}`}
                 onClick={() => setIsMobileMenuOpen(false)}>
                 {link.name}
               </Link>
@@ -126,7 +126,7 @@ export function Header() {
                 <Link
                   to="/login"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="block px-3 py-3 text-base font-medium text-charcoal-light hover:text-moss">
+                  className="block px-3 py-3 text-base font-medium text-charcoal-light hover:text-terracotta dark:text-dark-muted dark:hover:text-terracotta-300">
                   Entrar
                 </Link>
               )}

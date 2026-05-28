@@ -23,15 +23,15 @@ export function AdminDashboard() {
   }, [user]);
 
   if (isLoading) {
-    return <div className="min-h-screen bg-cream flex items-center justify-center text-charcoal-light">Carregando administração...</div>;
+    return <div className="min-h-screen bg-cream dark:bg-dark-bg flex items-center justify-center text-charcoal-light dark:text-dark-muted">Carregando administração...</div>;
   }
 
   if (!user) {
-    return <div className="min-h-screen bg-cream flex items-center justify-center"><Link to="/login" className="text-terracotta font-medium">Entrar como admin</Link></div>;
+    return <div className="min-h-screen bg-cream dark:bg-dark-bg flex items-center justify-center"><Link to="/login" className="text-terracotta font-medium">Entrar como admin</Link></div>;
   }
 
   if (user.role !== 'ADMIN') {
-    return <div className="min-h-screen bg-cream flex items-center justify-center text-red-600">Acesso restrito a administradores.</div>;
+    return <div className="min-h-screen bg-cream dark:bg-dark-bg flex items-center justify-center text-red-600">Acesso restrito a administradores.</div>;
   }
 
   const updateStatus = async (businessId: string, status: 'APPROVED' | 'REJECTED') => {
@@ -40,11 +40,11 @@ export function AdminDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-cream py-12 px-4">
+    <div className="min-h-screen bg-cream dark:bg-dark-bg py-12 px-4">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-3xl font-serif font-bold text-moss-900 mb-2 flex items-center gap-2"><ShieldCheck className="text-terracotta" /> Administração</h1>
-          <p className="text-charcoal-light">Modere negócios, usuários, categorias e avaliações.</p>
+          <h1 className="text-3xl font-serif font-bold text-moss-900 dark:text-dark-text mb-2 flex items-center gap-2"><ShieldCheck className="text-terracotta" /> Administração</h1>
+          <p className="text-charcoal-light dark:text-dark-muted">Modere negócios, usuários, categorias e avaliações.</p>
         </div>
 
         {error && <p className="text-red-600 mb-4">{error}</p>}
@@ -56,15 +56,15 @@ export function AdminDashboard() {
           <Metric icon={<Star />} label="Avaliações" value={dashboard?.reviews.total ?? 0} />
         </div>
 
-        <div className="bg-white rounded-3xl shadow-soft border border-moss/5 overflow-hidden">
-          <div className="p-5 border-b border-moss/10">
-            <h2 className="font-serif text-xl font-bold text-moss-900">Negócios aguardando aprovação</h2>
+        <div className="bg-white dark:bg-dark-surface rounded-3xl shadow-soft border border-moss/5 dark:border-dark-border overflow-hidden">
+          <div className="p-5 border-b border-moss/10 dark:border-dark-border">
+            <h2 className="font-serif text-xl font-bold text-moss-900 dark:text-dark-text">Negócios aguardando aprovação</h2>
           </div>
-          {pending.length === 0 ? <p className="p-5 text-charcoal-light">Nenhum negócio pendente.</p> : pending.map((business) => (
-            <div key={business.id} className="p-5 border-b border-moss/10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          {pending.length === 0 ? <p className="p-5 text-charcoal-light dark:text-dark-muted">Nenhum negócio pendente.</p> : pending.map((business) => (
+            <div key={business.id} className="p-5 border-b border-moss/10 dark:border-dark-border flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div>
-                <h3 className="font-serif font-bold text-moss-900">{business.name}</h3>
-                <p className="text-sm text-charcoal-light">{business.address.neighborhood} · {business.category}</p>
+                <h3 className="font-serif font-bold text-moss-900 dark:text-dark-text">{business.name}</h3>
+                <p className="text-sm text-charcoal-light dark:text-dark-muted">{business.address.neighborhood} · {business.category}</p>
               </div>
               <div className="flex gap-2">
                 <button onClick={() => updateStatus(business.id, 'APPROVED')} className="bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-medium">Aprovar</button>
@@ -79,5 +79,5 @@ export function AdminDashboard() {
 }
 
 function Metric({ icon, label, value }: { icon: React.ReactNode; label: string; value: number }) {
-  return <div className="bg-white rounded-2xl p-5 shadow-sm border border-moss/5"><div className="text-terracotta mb-3">{icon}</div><p className="text-sm text-charcoal-light">{label}</p><p className="text-2xl font-serif font-bold text-moss-900">{value}</p></div>;
+  return <div className="bg-white dark:bg-dark-surface rounded-2xl p-5 shadow-sm border border-moss/5 dark:border-dark-border"><div className="text-terracotta mb-3">{icon}</div><p className="text-sm text-charcoal-light dark:text-dark-muted">{label}</p><p className="text-2xl font-serif font-bold text-moss-900 dark:text-dark-text">{value}</p></div>;
 }
