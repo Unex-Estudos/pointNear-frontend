@@ -43,8 +43,6 @@ export const businessesService = {
     return response.data;
   },
 
-  // Usa a rota autenticada de merchant para garantir que o ownerId
-  // seja associado corretamente ao usuário logado no backend.
   async create(payload: unknown) {
     const response = await apiRequest<{ data: Business }>(
       "/merchant/businesses",

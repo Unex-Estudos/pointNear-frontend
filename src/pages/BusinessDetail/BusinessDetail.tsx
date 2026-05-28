@@ -66,26 +66,26 @@ export function BusinessDetail() {
 
   const category = categories.find((c) => c.slug === business.category);
   const isOpen = isBusinessOpenNow(business.hours);
-
-  // Guarda contra null, undefined e 0 — todos resultam em mapa oculto
   const coordinates =
-    business.address.lat && business.address.lng
+    business.address.lat != null && business.address.lng != null
       ? ([business.address.lat, business.address.lng] as [number, number])
       : null;
 
   const handleWhatsApp = () => {
-    if (business.contact.whatsapp)
+    if (business.contact.whatsapp) {
       window.open(`https://wa.me/${business.contact.whatsapp}`, "_blank");
+    }
   };
 
   const handlePhone = () => {
     const phone = business.contact.phone || business.contact.whatsapp;
-    if (phone) window.open(`tel:${phone}`, "_self");
+    if (phone) {
+      window.open(`tel:${phone}`, "_self");
+    }
   };
 
   return (
     <div className="min-h-screen bg-cream pb-24 md:pb-12">
-      {/* Mobile back button */}
       <div className="md:hidden fixed top-4 left-4 z-50">
         <button
           onClick={() => navigate(-1)}
