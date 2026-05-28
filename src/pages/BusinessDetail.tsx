@@ -8,6 +8,7 @@ import {
   Phone,
   MessageCircle,
   Share2,
+  Check,
   ChevronLeft,
   Info,
   Map as MapIcon,
@@ -37,6 +38,13 @@ export function BusinessDetail() {
   const [reviewAuthorName, setReviewAuthorName] = useState('');
   const [reviewError, setReviewError] = useState('');
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const handleShare = () => {
+    navigator.clipboard.writeText(window.location.href);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   useEffect(() => {
     if (!id) return;
@@ -248,8 +256,8 @@ export function BusinessDetail() {
                   <Phone size={20} />
                   Ligar
                 </button>
-                <button className="p-3.5 rounded-xl border-2 border-moss-100 text-moss-500 hover:bg-moss-50 transition-colors">
-                  <Share2 size={20} />
+                <button onClick={handleShare} title={copied ? 'Link copiado!' : 'Compartilhar'} className="p-3.5 rounded-xl border-2 border-moss-100 text-moss-500 hover:bg-moss-50 transition-colors">
+                  {copied ? <Check size={20} className="text-emerald-500" /> : <Share2 size={20} />}
                 </button>
               </div>
             </div>
@@ -693,6 +701,12 @@ export function BusinessDetail() {
           className="w-14 bg-moss-50 disabled:bg-moss-100 disabled:text-moss-400 disabled:cursor-not-allowed text-moss-800 rounded-xl flex items-center justify-center transition-colors">
           
           <Phone size={20} />
+        </button>
+        <button
+          onClick={handleShare}
+          title={copied ? 'Link copiado!' : 'Compartilhar'}
+          className="w-14 bg-moss-50 text-moss-800 rounded-xl flex items-center justify-center transition-colors">
+          {copied ? <Check size={20} className="text-emerald-500" /> : <Share2 size={20} />}
         </button>
       </div>
     </div>);

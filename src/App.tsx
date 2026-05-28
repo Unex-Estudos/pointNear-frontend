@@ -4,7 +4,7 @@ import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { Home } from './pages/Home';
 import { Search } from './pages/Search';
-import { BusinessDetail } from './pages/BusinessDetail';
+import { BusinessDetail } from './pages/BusinessDetail/BusinessDetail';
 import { Register } from './pages/Register';
 import { Login } from './pages/Login';
 import { Profile } from './pages/Profile';

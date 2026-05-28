@@ -15,7 +15,6 @@ import { categoriesService } from '../services/categories.service';
 import { businessesService } from '../services/businesses.service';
 import { BusinessCard } from '../components/BusinessCard';
 import { Business, Category } from '../types';
-// Fix for Leaflet marker icons in React
 import L from 'leaflet';
 import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
@@ -108,11 +107,9 @@ export function Search() {
     setSortBy('featured');
     setSearchParams(new URLSearchParams());
   };
-  // Center of São Paulo for map
   const mapCenter = [-23.5505, -46.6333] as [number, number];
   const FilterContent = () =>
   <div className="space-y-8">
-      {/* Categories */}
       <div>
         <h3 className="font-serif font-semibold text-lg mb-4 text-moss-900">
           Categorias
@@ -121,6 +118,7 @@ export function Search() {
           {categories.map((cat) =>
         <label
           key={cat.slug}
+          onClick={() => toggleCategory(cat.slug)}
           className="flex items-center gap-3 cursor-pointer group">
           
               <div
@@ -138,7 +136,6 @@ export function Search() {
 
       <hr className="border-moss/10" />
 
-      {/* Quick Filters */}
       <div>
         <h3 className="font-serif font-semibold text-lg mb-4 text-moss-900">
           Filtros Rápidos
@@ -164,7 +161,6 @@ export function Search() {
 
       <hr className="border-moss/10" />
 
-      {/* Rating */}
       <div>
         <h3 className="font-serif font-semibold text-lg mb-4 text-moss-900">
           Avaliação Mínima
@@ -252,14 +248,12 @@ export function Search() {
       </div>
 
       <div className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex gap-8">
-        {/* Desktop Sidebar */}
         <aside className="hidden md:block w-64 shrink-0">
           <div className="sticky top-40 bg-white p-6 rounded-2xl shadow-sm border border-moss/5">
             <FilterContent />
           </div>
         </aside>
 
-        {/* Mobile Filters Modal */}
         <AnimatePresence>
           {isMobileFiltersOpen &&
           <>
@@ -320,9 +314,7 @@ export function Search() {
           }
         </AnimatePresence>
 
-        {/* Main Content */}
         <main className="flex-1 min-w-0 flex flex-col">
-          {/* Results Header */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
             <div>
               <h1 className="text-2xl font-serif font-bold text-moss-900">
@@ -388,7 +380,6 @@ export function Search() {
             </div>
           </div>
 
-          {/* Results Area */}
           {isLoading ?
           <div className="flex-1 bg-white rounded-2xl border border-moss/10 flex items-center justify-center p-12 text-center text-charcoal-light">
             Carregando negócios...
