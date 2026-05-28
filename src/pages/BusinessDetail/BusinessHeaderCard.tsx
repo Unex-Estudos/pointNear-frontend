@@ -1,6 +1,6 @@
-import { Star, MapPin, Clock, Phone, MessageCircle, Share2 } from 'lucide-react';
+import { Star, MapPin, Clock, Phone, MessageCircle, Share2,Check } from 'lucide-react';
 import { Business, Category } from '../../types';
-
+import { useState } from 'react';
 interface Props {
   business: Business;
   category?: Category;
@@ -10,7 +10,13 @@ interface Props {
 }
 
 export function BusinessHeaderCard({ business, category, isOpen, onWhatsApp, onPhone }: Props) {
-  return (
+  const [copied, setCopied] = useState(false);  
+  const handleShare = () => {
+    navigator.clipboard.writeText(window.location.href);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+  return ( 
     <div className="bg-white rounded-3xl p-6 md:p-8 shadow-float mb-8 border border-moss/5">
       <div className="flex flex-wrap items-center gap-3 mb-4">
         <span className={`px-3 py-1 rounded-full text-xs font-semibold ${category?.color ?? 'bg-moss-100 text-moss-700'}`}>
@@ -52,8 +58,8 @@ export function BusinessHeaderCard({ business, category, isOpen, onWhatsApp, onP
           className="flex-1 bg-white border-2 border-moss-200 hover:border-moss-300 disabled:bg-moss-50 disabled:text-moss-400 disabled:cursor-not-allowed text-moss-800 py-3.5 rounded-xl font-medium flex items-center justify-center gap-2 transition-colors">
           <Phone size={20} /> Ligar
         </button>
-        <button className="p-3.5 rounded-xl border-2 border-moss-100 text-moss-500 hover:bg-moss-50 transition-colors">
-          <Share2 size={20} />
+        <button onClick={handleShare} className="p-3.5 rounded-xl border-2 border-moss-100 text-moss-500 hover:bg-moss-50 transition-colors">
+          {copied ? <Check size={20} className="text-emerald-500" /> : <Share2 size={20} />}
         </button>
       </div>
     </div>
