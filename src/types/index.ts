@@ -19,6 +19,7 @@ export interface Category {
 
 export interface Review {
   id: string;
+  userId?: string | null; // ← adicionado: autor logado ou null se visitante
   authorName: string;
   rating: number;
   comment: string;
