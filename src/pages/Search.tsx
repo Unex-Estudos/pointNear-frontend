@@ -15,6 +15,7 @@ import { categoriesService } from '../services/categories.service';
 import { businessesService } from '../services/businesses.service';
 import { BusinessCard } from '../components/BusinessCard';
 import { Business, Category } from '../types';
+// Fix for Leaflet marker icons in React
 import L from 'leaflet';
 import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
@@ -29,8 +30,10 @@ export function Search() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'map'>('grid');
+  // Form states
   const [query, setQuery] = useState(searchParams.get('q') || '');
   const [location, setLocation] = useState(searchParams.get('local') || '');
+  // Filter states
   const [selectedCategories, setSelectedCategories] = useState<string[]>(searchParams.getAll('categoria'));
   const [openNow, setOpenNow] = useState(searchParams.get('openNow') === 'true');
   const [minRating, setMinRating] = useState(Number(searchParams.get('minRating') ?? 0));
@@ -105,9 +108,11 @@ export function Search() {
     setSortBy('featured');
     setSearchParams(new URLSearchParams());
   };
+  // Center of São Paulo for map
   const mapCenter = [-23.5505, -46.6333] as [number, number];
   const FilterContent = () =>
   <div className="space-y-8">
+      {/* Categories */}
       <div>
         <h3 className="font-serif font-semibold text-lg mb-4 text-moss-900">
           Categorias
@@ -116,6 +121,7 @@ export function Search() {
           {categories.map((cat) =>
         <label
           key={cat.slug}
+          onClick={() => toggleCategory(cat.slug)}
           className="flex items-center gap-3 cursor-pointer group">
           
               <div
@@ -133,6 +139,7 @@ export function Search() {
 
       <hr className="border-moss/10" />
 
+      {/* Quick Filters */}
       <div>
         <h3 className="font-serif font-semibold text-lg mb-4 text-moss-900">
           Filtros Rápidos
@@ -158,6 +165,7 @@ export function Search() {
 
       <hr className="border-moss/10" />
 
+      {/* Rating */}
       <div>
         <h3 className="font-serif font-semibold text-lg mb-4 text-moss-900">
           Avaliação Mínima
@@ -198,57 +206,61 @@ export function Search() {
 
   return (
     <div className="min-h-screen flex flex-col bg-cream">
+      {/* Top Search Bar */}
       <div className="bg-white border-b border-moss/10 sticky top-16 z-40 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <form
             onSubmit={handleSearch}
             className="flex flex-col md:flex-row gap-3">
-
-            <div className="flex-1 flex items-center bg-moss-50 rounded-xl border border-transparent focus-within:border-moss/20 focus-within:bg-white transition-colors h-12 overflow-hidden">
-              <div className="flex items-center flex-1 px-4 h-full">
-                <SearchIcon className="text-moss-400 mr-3 shrink-0" size={18} />
-                <input
-                  type="text"
-                  placeholder="O que você procura?"
-                  className="w-full bg-transparent outline-none text-charcoal placeholder:text-moss-400 text-sm"
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)} />
-              </div>
-              <div className="w-px h-6 bg-moss-200 shrink-0" />
-              <div className="flex items-center flex-1 px-4 h-full">
-                <MapPin className="text-terracotta-400 mr-3 shrink-0" size={18} />
-                <input
-                  type="text"
-                  placeholder="Bairro ou CEP"
-                  className="w-full bg-transparent outline-none text-charcoal placeholder:text-moss-400 text-sm"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)} />
-              </div>
+            
+            <div className="flex-1 flex items-center px-4 bg-moss-50 rounded-xl border border-transparent focus-within:border-moss/20 focus-within:bg-white transition-colors h-12">
+              <SearchIcon className="text-moss-400 mr-3" size={18} />
+              <input
+                type="text"
+                placeholder="O que você procura?"
+                className="w-full bg-transparent outline-none text-charcoal placeholder:text-moss-400 text-sm"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)} />
+              
+            </div>
+            <div className="flex-1 flex items-center px-4 bg-moss-50 rounded-xl border border-transparent focus-within:border-moss/20 focus-within:bg-white transition-colors h-12">
+              <MapPin className="text-terracotta-400 mr-3" size={18} />
+              <input
+                type="text"
+                placeholder="Bairro ou CEP"
+                className="w-full bg-transparent outline-none text-charcoal placeholder:text-moss-400 text-sm"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)} />
+              
+            </div>
+            <div className="flex gap-2">
               <button
                 type="submit"
-                className="h-full px-5 bg-moss-700 hover:bg-moss-800 text-white transition-colors flex items-center justify-center shrink-0"
-                aria-label="Buscar">
-                <SearchIcon size={18} />
+                className="bg-moss-700 hover:bg-moss-800 text-white px-6 rounded-xl font-medium transition-colors h-12">
+                
+                Buscar
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsMobileFiltersOpen(true)}
+                className="md:hidden bg-white border border-moss/20 text-moss-700 px-4 rounded-xl flex items-center justify-center h-12">
+                
+                <SlidersHorizontal size={20} />
               </button>
             </div>
-
-            <button
-              type="button"
-              onClick={() => setIsMobileFiltersOpen(true)}
-              className="md:hidden bg-white border border-moss/20 text-moss-700 px-4 rounded-xl flex items-center justify-center h-12">
-              <SlidersHorizontal size={20} />
-            </button>
           </form>
         </div>
       </div>
 
       <div className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex gap-8">
+        {/* Desktop Sidebar */}
         <aside className="hidden md:block w-64 shrink-0">
           <div className="sticky top-40 bg-white p-6 rounded-2xl shadow-sm border border-moss/5">
             <FilterContent />
           </div>
         </aside>
 
+        {/* Mobile Filters Modal */}
         <AnimatePresence>
           {isMobileFiltersOpen &&
           <>
@@ -309,7 +321,9 @@ export function Search() {
           }
         </AnimatePresence>
 
+        {/* Main Content */}
         <main className="flex-1 min-w-0 flex flex-col">
+          {/* Results Header */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
             <div>
               <h1 className="text-2xl font-serif font-bold text-moss-900">
@@ -375,6 +389,7 @@ export function Search() {
             </div>
           </div>
 
+          {/* Results Area */}
           {isLoading ?
           <div className="flex-1 bg-white rounded-2xl border border-moss/10 flex items-center justify-center p-12 text-center text-charcoal-light">
             Carregando negócios...
