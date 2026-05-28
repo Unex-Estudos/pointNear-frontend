@@ -8,6 +8,7 @@ import {
   Phone,
   MessageCircle,
   Share2,
+  Check,
   ChevronLeft,
   Info,
   Map as MapIcon,
@@ -37,6 +38,13 @@ export function BusinessDetail() {
   const [reviewAuthorName, setReviewAuthorName] = useState('');
   const [reviewError, setReviewError] = useState('');
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const handleShare = () => {
+    navigator.clipboard.writeText(window.location.href);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   useEffect(() => {
     if (!id) return;
@@ -149,7 +157,6 @@ export function BusinessDetail() {
   const today = getCurrentWeekDayKey();
   return (
     <div className="min-h-screen bg-cream pb-24 md:pb-12">
-      {/* Mobile Back Button */}
       <div className="md:hidden fixed top-4 left-4 z-50">
         <button
           onClick={() => navigate(-1)}
@@ -159,7 +166,6 @@ export function BusinessDetail() {
         </button>
       </div>
 
-      {/* Photo Gallery Hero */}
       <div className="h-64 md:h-96 w-full relative flex gap-1 md:gap-2 bg-moss-900">
         <div className="w-full md:w-2/3 h-full relative">
           <img
@@ -189,9 +195,7 @@ export function BusinessDetail() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6 md:-mt-16 relative z-10">
         <div className="flex flex-col lg:flex-row gap-8">
-          {/* Main Content Area */}
           <div className="flex-1">
-            {/* Header Card */}
             <div className="bg-white rounded-3xl p-6 md:p-8 shadow-float mb-8 border border-moss/5">
               <div className="flex flex-wrap items-center gap-3 mb-4">
                 <span
@@ -230,7 +234,6 @@ export function BusinessDetail() {
                 </div>
               </div>
 
-              {/* Desktop Contact Buttons */}
               <div className="hidden md:flex gap-4 border-t border-moss/10 pt-6">
                 <button
                   onClick={handleWhatsApp}
@@ -248,13 +251,12 @@ export function BusinessDetail() {
                   <Phone size={20} />
                   Ligar
                 </button>
-                <button className="p-3.5 rounded-xl border-2 border-moss-100 text-moss-500 hover:bg-moss-50 transition-colors">
-                  <Share2 size={20} />
+                <button onClick={handleShare} title={copied ? 'Link copiado!' : 'Compartilhar'} className="p-3.5 rounded-xl border-2 border-moss-100 text-moss-500 hover:bg-moss-50 transition-colors">
+                  {copied ? <Check size={20} className="text-emerald-500" /> : <Share2 size={20} />}
                 </button>
               </div>
             </div>
 
-            {/* Tabs Navigation */}
             <div className="flex overflow-x-auto hide-scrollbar border-b border-moss/20 mb-8 sticky top-16 bg-cream/90 backdrop-blur-md z-30 pt-2">
               {[
               {
@@ -280,7 +282,6 @@ export function BusinessDetail() {
               )}
             </div>
 
-            {/* Tab Content */}
             <div className="min-h-[400px]">
               {activeTab === 'sobre' &&
               <motion.div
@@ -294,7 +295,6 @@ export function BusinessDetail() {
                 }}
                 className="space-y-10">
                 
-                  {/* Description */}
                   <section>
                     <h3 className="text-xl font-serif font-bold text-moss-900 mb-4 flex items-center gap-2">
                       <Info size={20} className="text-terracotta" /> Sobre o
@@ -317,7 +317,6 @@ export function BusinessDetail() {
                   }
                   </section>
 
-                  {/* Mobile Map & Address (Desktop has it in sidebar) */}
                   <section className="lg:hidden">
                     <h3 className="text-xl font-serif font-bold text-moss-900 mb-4 flex items-center gap-2">
                       <MapIcon size={20} className="text-terracotta" />{' '}
@@ -365,7 +364,6 @@ export function BusinessDetail() {
                     </div>
                   </section>
 
-                  {/* Mobile Hours (Desktop has it in sidebar) */}
                   <section className="lg:hidden">
                     <h3 className="text-xl font-serif font-bold text-moss-900 mb-4 flex items-center gap-2">
                       <Calendar size={20} className="text-terracotta" />{' '}
@@ -599,9 +597,7 @@ export function BusinessDetail() {
             </div>
           </div>
 
-          {/* Desktop Sidebar (Location & Hours) */}
           <div className="hidden lg:block w-80 shrink-0 space-y-6">
-            {/* Location Card */}
             <div className="bg-white rounded-2xl p-5 shadow-sm border border-moss/10 sticky top-32">
               <h3 className="font-serif font-bold text-moss-900 mb-4 flex items-center gap-2">
                 <MapIcon size={18} className="text-terracotta" /> Localização
@@ -677,7 +673,6 @@ export function BusinessDetail() {
         </div>
       </div>
 
-      {/* Mobile Sticky Contact Bar */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-moss/10 p-4 shadow-[0_-10px_20px_rgba(0,0,0,0.05)] z-50 flex gap-3">
         <button
           onClick={handleWhatsApp}
@@ -693,6 +688,12 @@ export function BusinessDetail() {
           className="w-14 bg-moss-50 disabled:bg-moss-100 disabled:text-moss-400 disabled:cursor-not-allowed text-moss-800 rounded-xl flex items-center justify-center transition-colors">
           
           <Phone size={20} />
+        </button>
+        <button
+          onClick={handleShare}
+          title={copied ? 'Link copiado!' : 'Compartilhar'}
+          className="w-14 bg-moss-50 text-moss-800 rounded-xl flex items-center justify-center transition-colors">
+          {copied ? <Check size={20} className="text-emerald-500" /> : <Share2 size={20} />}
         </button>
       </div>
     </div>);

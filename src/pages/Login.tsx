@@ -67,7 +67,7 @@ export function Login() {
         )}
 
         <div className="mb-4">
-          <label className="block text-sm font-medium text-moss-900 mb-1">
+          <label className="block text-sm font-medium text-dark-text mb-1">
             E-mail
           </label>
           <input
@@ -79,7 +79,7 @@ export function Login() {
         </div>
 
         <div className="mb-4">
-          <label className="block text-sm font-medium text-moss-900 mb-1">
+          <label className="block text-sm font-medium text-dark-text mb-1">
             Senha
           </label>
           <input
