@@ -56,4 +56,18 @@ export const businessesService = {
     });
     return response.data;
   },
+
+  async updateReview(reviewId: string, payload: { rating: number; comment: string }) {
+    const response = await apiRequest<{ data: Business['reviews'][number] }>(`/reviews/${reviewId}`, {
+      method: 'PATCH',
+      body: JSON.stringify(payload),
+    });
+    return response.data;
+  },
+
+  async deleteReview(reviewId: string) {
+    await apiRequest(`/reviews/${reviewId}`, {
+      method: 'DELETE',
+    });
+  },
 };
