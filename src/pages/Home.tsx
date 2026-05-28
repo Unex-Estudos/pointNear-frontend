@@ -45,7 +45,7 @@ export function Home() {
   return (
     <div className="min-h-screen flex flex-col bg-cream dark:bg-dark-bg text-charcoal dark:text-dark-text">
       {/* Hero Section */}
-      <section className="py-20 bg-white dark:bg-dark-bg">
+      <section className="py-20 bg-white dark:bg-dark-bg relative overflow-hidden">
         {/* Abstract background shapes */}
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-10 bg-cream dark:bg-dark-bg">
           <div className="absolute -top-40 -right-40 w-96 h-96 rounded-full bg-terracotta-100/50 blur-3xl"></div>
@@ -66,7 +66,7 @@ export function Home() {
               transition={{
                 duration: 0.5,
               }}
-              className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-moss-900 dark:text-amber-100 mb-6 leading-tight">
+              className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-moss-900 dark:text-dark-text mb-6 leading-tight">
               Descubra os melhores{" "}
               <span className="text-terracotta italic">negócios</span> do seu
               bairro
@@ -84,7 +84,7 @@ export function Home() {
                 duration: 0.5,
                 delay: 0.1,
               }}
-              className="text-lg md:text-xl text-charcoal-light dark:text-amber-100 mb-10">
+              className="text-lg md:text-xl text-charcoal-light dark:text-dark-muted mb-10">
               Apoie o comércio local. Encontre serviços, produtos e experiências
               incríveis pertinho de você.
             </motion.p>
@@ -102,29 +102,29 @@ export function Home() {
                 delay: 0.2,
               }}
               onSubmit={handleSearch}
-              className="bg-white p-2 md:p-3 rounded-2xl shadow-float flex flex-col md:flex-row gap-2 md:gap-4 border border-moss/10 dark:bg-dark-bg dark:border-dark-border">
+              className="bg-white p-2 md:p-3 rounded-2xl shadow-float flex flex-col md:flex-row gap-2 md:gap-4 border border-moss/10 dark:bg-dark-surface dark:border-dark-border">
               <div className="flex-1 flex items-center px-4 bg-moss-50/50 rounded-xl border border-transparent focus-within:border-moss/20 focus-within:bg-white dark:focus-within:bg-dark-surface transition-colors dark:bg-dark-surface">
                 <Search
-                  className="text-moss-400 mr-3 dark:text-amber-100"
+                  className="text-moss-400 mr-3 dark:text-dark-text"
                   size={20}
                 />
                 <input
                   type="text"
                   placeholder="O que você procura? (ex: padaria, encanador)"
-                  className="w-full py-3 md:py-4 bg-transparent outline-none text-charcoal dark:text-orange-100 placeholder:text-moss-400 dark:placeholder:text-orange-300"
+                  className="w-full py-3 md:py-4 bg-transparent outline-none text-charcoal dark:text-dark-text placeholder:text-moss-400 dark:placeholder:text-dark-muted"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
               <div className="flex-1 flex items-center px-4 bg-moss-50/50 rounded-xl border border-transparent focus-within:border-moss/20 focus-within:bg-white dark:focus-within:bg-dark-surface transition-colors dark:bg-dark-surface">
                 <MapPin
-                  className="text-terracotta-400 mr-3 dark:text-amber-100"
+                  className="text-terracotta-400 mr-3 dark:text-dark-text"
                   size={20}
                 />
                 <input
                   type="text"
                   placeholder="Bairro ou CEP"
-                  className="w-full py-3 md:py-4 bg-transparent outline-none text-charcoal dark:text-orange-100 placeholder:text-moss-400 dark:placeholder:text-orange-300"
+                  className="w-full py-3 md:py-4 bg-transparent outline-none text-charcoal dark:text-dark-text placeholder:text-moss-400 dark:placeholder:text-dark-muted"
                   value={locationQuery}
                   onChange={(e) => setLocationQuery(e.target.value)}
                 />
@@ -166,10 +166,10 @@ export function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-end mb-10">
             <div>
-              <h2 className="text-3xl font-serif font-bold text-moss-900 dark:text-amber-100 mb-2">
+              <h2 className="text-3xl font-serif font-bold text-moss-900 dark:text-dark-text mb-2">
                 Estabelecimentos em destaque
               </h2>
-              <p className="text-charcoal-light dark:text-amber-100">
+              <p className="text-charcoal-light dark:text-dark-muted">
                 Os queridinhos da vizinhança, recomendados por clientes.
               </p>
             </div>
@@ -206,10 +206,10 @@ export function Home() {
       <section className="py-24 bg-moss-900 dark:bg-dark-surface relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-serif font-bold text-white dark:text-amber-100 mb-4">
+            <h2 className="text-3xl md:text-4xl font-serif font-bold text-white dark:text-dark-text mb-4">
               Como funciona
             </h2>
-            <p className="text-moss-200 dark:text-amber-200 max-w-2xl mx-auto">
+            <p className="text-moss-200 dark:text-dark-muted max-w-2xl mx-auto">
               Simples, rápido e direto ao ponto. Sem intermediários.
             </p>
           </div>
@@ -241,10 +241,10 @@ export function Home() {
                 <div className="w-24 h-24 rounded-full bg-moss-800 border-4 border-moss-900 flex items-center justify-center text-terracotta mb-6 shadow-lg">
                   {step.icon}
                 </div>
-                <h3 className="text-xl font-serif font-bold text-white dark:text-amber-100 mb-3">
+                <h3 className="text-xl font-serif font-bold text-white dark:text-dark-text mb-3">
                   {step.title}
                 </h3>
-                <p className="text-moss-200 dark:text-amber-200">{step.desc}</p>
+                <p className="text-moss-200 dark:text-dark-muted">{step.desc}</p>
               </div>
             ))}
           </div>
@@ -258,10 +258,10 @@ export function Home() {
         </div>
 
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-          <h2 className="text-3xl md:text-4xl font-serif font-bold text-moss-900 dark:text-amber-100 mb-6">
+          <h2 className="text-3xl md:text-4xl font-serif font-bold text-moss-900 dark:text-dark-text mb-6">
             Tem um negócio local?
           </h2>
-          <p className="text-lg text-charcoal-light dark:text-amber-100 mb-10 max-w-2xl mx-auto">
+          <p className="text-lg text-charcoal-light dark:text-dark-muted mb-10 max-w-2xl mx-auto">
             Aumente sua visibilidade no bairro. Cadastre seu estabelecimento
             gratuitamente e seja encontrado por clientes que estão pertinho de
             você.

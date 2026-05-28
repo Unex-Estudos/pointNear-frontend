@@ -40,39 +40,6 @@
   }
 }
 
-body.dark .bg-white {
-  background-color: #172318;
-}
-body.dark .bg-moss-50 {
-  background-color: rgba(38, 57, 38, 0.55);
-}
-.dark body .text-charcoal {
-  color: #B3A487;
-}
-.dark body .text-charcoal-light {
-  color: #B3A487;
-}
-.dark body .bg-white {
-  background-color: #172318;
-}
-.dark body .bg-moss-50 {
-  background-color: rgba(38, 57, 38, 0.55);
-}
-.dark body .bg-cream {
-  background-color: #0f1a14;
-}
-.dark body .border-moss\/10 {
-  border-color: rgba(143, 168, 152, 0.14);
-}
-.dark body .text-moss-200 {
-  color: #B3A487;
-}
-.dark body .text-moss-300 {
-  color: #B3A487;
-}
-.dark body .text-moss-50 {
-  color: #B3A487;
-}
 
 /* Custom scrollbar for horizontal scrolling areas */
 .hide-scrollbar::-webkit-scrollbar {

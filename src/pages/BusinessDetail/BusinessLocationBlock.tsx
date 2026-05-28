@@ -9,10 +9,10 @@ interface Props {
 export function BusinessLocationBlock({ address, coordinates }: Props) {
   return (
     <>
-      <p className="font-medium text-charcoal mb-1 text-sm">
+      <p className="font-medium text-charcoal dark:text-dark-text mb-1 text-sm">
         {address.street}, {address.number}
       </p>
-      <p className="text-charcoal-light text-sm mb-4">
+      <p className="text-charcoal-light dark:text-dark-muted text-sm mb-4">
         {address.neighborhood} - {address.city}, {address.state}
       </p>
       {coordinates ? (
@@ -27,12 +27,12 @@ export function BusinessLocationBlock({ address, coordinates }: Props) {
             href={`https://maps.google.com/?q=${coordinates[0]},${coordinates[1]}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="block w-full text-center bg-moss-50 hover:bg-moss-100 text-moss-800 py-2.5 rounded-xl font-medium transition-colors text-sm">
+            className="block w-full text-center bg-moss-50 dark:bg-dark-elevated hover:bg-moss-100 dark:hover:bg-dark-border text-moss-800 dark:text-dark-text py-2.5 rounded-xl font-medium transition-colors text-sm">
             Como chegar
           </a>
         </>
       ) : (
-        <div className="rounded-xl bg-moss-50 p-4 text-sm text-charcoal-light text-center">
+        <div className="rounded-xl bg-moss-50 dark:bg-dark-elevated p-4 text-sm text-charcoal-light dark:text-dark-muted text-center">
           Mapa indisponível para este endereço.
         </div>
       )}
