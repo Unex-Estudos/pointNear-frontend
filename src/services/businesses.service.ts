@@ -1,5 +1,5 @@
-import { apiRequest } from '../lib/api';
-import { Business, PaginatedResponse } from '../types';
+import { apiRequest } from "../lib/api";
+import { Business, PaginatedResponse } from "../types";
 
 export interface BusinessSearchParams {
   q?: string;
@@ -16,7 +16,7 @@ export interface BusinessSearchParams {
 function toQuery(params: BusinessSearchParams) {
   const search = new URLSearchParams();
   Object.entries(params).forEach(([key, value]) => {
-    if (value === undefined || value === '' || value === false) {
+    if (value === undefined || value === "" || value === false) {
       return;
     }
 
@@ -28,12 +28,14 @@ function toQuery(params: BusinessSearchParams) {
     search.set(key, String(value));
   });
   const query = search.toString();
-  return query ? `?${query}` : '';
+  return query ? `?${query}` : "";
 }
 
 export const businessesService = {
   async list(params: BusinessSearchParams = {}) {
-    return apiRequest<PaginatedResponse<Business>>(`/businesses${toQuery(params)}`);
+    return apiRequest<PaginatedResponse<Business>>(
+      `/businesses${toQuery(params)}`,
+    );
   },
 
   async getById(id: string) {
@@ -42,32 +44,47 @@ export const businessesService = {
   },
 
   async create(payload: unknown) {
-    const response = await apiRequest<{ data: Business }>('/businesses', {
-      method: 'POST',
-      body: JSON.stringify(payload),
-    });
+    const response = await apiRequest<{ data: Business }>(
+      "/merchant/businesses",
+      {
+        method: "POST",
+        body: JSON.stringify(payload),
+      },
+    );
     return response.data;
   },
 
-  async createReview(businessId: string, payload: { rating: number; comment: string; authorName?: string }) {
-    const response = await apiRequest<{ data: Business['reviews'][number] }>(`/businesses/${businessId}/reviews`, {
-      method: 'POST',
-      body: JSON.stringify(payload),
-    });
+  async createReview(
+    businessId: string,
+    payload: { rating: number; comment: string; authorName?: string },
+  ) {
+    const response = await apiRequest<{ data: Business["reviews"][number] }>(
+      `/businesses/${businessId}/reviews`,
+      {
+        method: "POST",
+        body: JSON.stringify(payload),
+      },
+    );
     return response.data;
   },
 
-  async updateReview(reviewId: string, payload: { rating: number; comment: string }) {
-    const response = await apiRequest<{ data: Business['reviews'][number] }>(`/reviews/${reviewId}`, {
-      method: 'PATCH',
-      body: JSON.stringify(payload),
-    });
+  async updateReview(
+    reviewId: string,
+    payload: { rating: number; comment: string },
+  ) {
+    const response = await apiRequest<{ data: Business["reviews"][number] }>(
+      `/reviews/${reviewId}`,
+      {
+        method: "PATCH",
+        body: JSON.stringify(payload),
+      },
+    );
     return response.data;
   },
 
   async deleteReview(reviewId: string) {
     await apiRequest(`/reviews/${reviewId}`, {
-      method: 'DELETE',
+      method: "DELETE",
     });
   },
 };

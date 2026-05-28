@@ -1,26 +1,26 @@
-import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { ChevronLeft } from 'lucide-react';
-import { businessesService } from "../../services/businesses.service"
-import { categoriesService }  from '../../services/categories.service';
-import { Business, Category } from '../../types';
-import { isBusinessOpenNow }  from '../../utils/business-hours';
-import { useAuth }            from '../../context/AuthContext';
+import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { ChevronLeft } from "lucide-react";
+import { businessesService } from "../../services/businesses.service";
+import { categoriesService } from "../../services/categories.service";
+import { Business, Category } from "../../types";
+import { isBusinessOpenNow } from "../../utils/business-hours";
+import { useAuth } from "../../context/AuthContext";
 
-import { BusinessHero }       from '../BusinessDetail/BusinessHero';
-import { BusinessHeaderCard } from '../BusinessDetail/BusinessHeaderCard';
-import { BusinessTabs }       from '../BusinessDetail/Businesstabs';
-import { BusinessSidebar }      from '../BusinessDetail/BusinessSideBar';
-import { MobileContactBar }   from '../BusinessDetail/MobileContactBar';
+import { BusinessHero } from "../BusinessDetail/BusinessHero";
+import { BusinessHeaderCard } from "../BusinessDetail/BusinessHeaderCard";
+import { BusinessTabs } from "../BusinessDetail/BusinessTabs";
+import { BusinessSidebar } from "../BusinessDetail/BusinessSideBar";
+import { MobileContactBar } from "../BusinessDetail/MobileContactBar";
 
 export function BusinessDetail() {
-  const { id }     = useParams<{ id: string }>();
-  const navigate   = useNavigate();
-  const { user }   = useAuth();
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const { user } = useAuth();
 
-  const [business,   setBusiness]   = useState<Business | null>(null);
+  const [business, setBusiness] = useState<Business | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [isLoading,  setIsLoading]  = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (!id) return;
@@ -55,38 +55,42 @@ export function BusinessDetail() {
           Estabelecimento não encontrado
         </h2>
         <button
-          onClick={() => navigate('/buscar')}
-          className="bg-terracotta text-white px-6 py-2 rounded-xl font-medium">
+          onClick={() => navigate("/buscar")}
+          className="bg-terracotta text-white px-6 py-2 rounded-xl font-medium"
+        >
           Voltar para busca
         </button>
       </div>
     );
   }
 
-  const category    = categories.find((c) => c.slug === business.category);
-  const isOpen      = isBusinessOpenNow(business.hours);
+  const category = categories.find((c) => c.slug === business.category);
+  const isOpen = isBusinessOpenNow(business.hours);
   const coordinates =
     business.address.lat != null && business.address.lng != null
       ? ([business.address.lat, business.address.lng] as [number, number])
       : null;
 
   const handleWhatsApp = () => {
-    if (business.contact.whatsapp)
-      window.open(`https://wa.me/${business.contact.whatsapp}`, '_blank');
+    if (business.contact.whatsapp) {
+      window.open(`https://wa.me/${business.contact.whatsapp}`, "_blank");
+    }
   };
 
   const handlePhone = () => {
     const phone = business.contact.phone || business.contact.whatsapp;
-    if (phone) window.open(`tel:${phone}`, '_self');
+    if (phone) {
+      window.open(`tel:${phone}`, "_self");
+    }
   };
 
   return (
     <div className="min-h-screen bg-cream pb-24 md:pb-12">
-      {/* Mobile back button */}
       <div className="md:hidden fixed top-4 left-4 z-50">
         <button
           onClick={() => navigate(-1)}
-          className="bg-white/90 backdrop-blur-md p-2 rounded-full shadow-md text-moss-900">
+          className="bg-white/90 backdrop-blur-md p-2 rounded-full shadow-md text-moss-900"
+        >
           <ChevronLeft size={24} />
         </button>
       </div>
@@ -95,7 +99,6 @@ export function BusinessDetail() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6 md:-mt-16 relative z-10">
         <div className="flex flex-col lg:flex-row gap-8">
-
           <div className="flex-1">
             <BusinessHeaderCard
               business={business}

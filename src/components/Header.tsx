@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Store, Menu, X } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import ThemeToggle from "../utils/ThemeToggle";
 export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
@@ -29,7 +30,7 @@ export function Header() {
     return location.pathname.startsWith(path);
   };
   return (
-    <header className="sticky top-0 z-50 w-full bg-cream/90 backdrop-blur-md border-b border-moss/10">
+    <header className="sticky top-0 z-50 w-full bg-cream/90 dark:bg-dark-bg/95 backdrop-blur-md border-b border-moss/10 dark:border-dark-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
@@ -43,13 +44,12 @@ export function Header() {
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-8">
+          <nav className="hidden md:flex items-center gap-6">
             {navLinks.map((link) => (
               <Link
                 key={link.path}
                 to={link.path}
-                className={`text-sm font-medium transition-colors hover:text-terracotta ${isActive(link.path) ? "text-terracotta" : "text-charcoal-light"}`}
-              >
+                className={`text-sm font-medium transition-colors hover:text-terracotta ${isActive(link.path) ? "text-terracotta" : "text-charcoal-light dark:text-dark-text"}`}>
                 {link.name}
               </Link>
             ))}
@@ -57,26 +57,24 @@ export function Header() {
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center gap-4">
+            <ThemeToggle />
             {isAuthenticated ? (
               <>
                 <Link
                   to={user?.role === "ADMIN" ? "/admin" : "/dashboard"}
-                  className="text-sm font-medium text-charcoal-light hover:text-moss transition-colors"
-                >
+                  className="text-sm font-medium text-charcoal-light hover:text-moss transition-colors dark:text-dark-text dark:hover:text-moss">
                   Dashboard
                 </Link>
                 <button
                   onClick={logout}
-                  className="text-sm font-medium text-charcoal-light hover:text-moss transition-colors"
-                >
+                  className="text-sm font-medium text-charcoal-light hover:text-moss transition-colors dark:text-dark-text dark:hover:text-moss">
                   Sair
                 </button>
               </>
             ) : (
               <Link
                 to="/login"
-                className="text-sm font-medium text-charcoal-light hover:text-moss transition-colors"
-              >
+                className="text-sm font-medium text-charcoal-light hover:text-moss transition-colors dark:text-dark-text dark:hover:text-moss">
                 Entrar
               </Link>
             )}
@@ -84,9 +82,8 @@ export function Header() {
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden p-2 text-charcoal-light hover:text-moss"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          >
+            className="md:hidden p-2 text-charcoal-light hover:text-moss dark:text-dark-text dark:hover:text-moss"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
@@ -94,32 +91,34 @@ export function Header() {
 
       {/* Mobile Nav */}
       {isMobileMenuOpen && (
-        <div className="md:hidden bg-cream border-b border-moss/10 absolute w-full">
+        <div className="md:hidden bg-cream border-b border-moss/10 absolute w-full dark:bg-dark-bg dark:border-dark-border">
           <div className="px-4 pt-2 pb-6 space-y-1 shadow-soft">
             {navLinks.map((link) => (
               <Link
                 key={link.path}
                 to={link.path}
-                className={`block px-3 py-3 rounded-md text-base font-medium ${isActive(link.path) ? "bg-terracotta/10 text-terracotta" : "text-charcoal-light hover:bg-moss/5 hover:text-moss"}`}
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
+                className={`block px-3 py-3 rounded-md text-base font-medium ${isActive(link.path) ? "bg-terracotta/10 text-terracotta" : "text-charcoal-light dark:text-dark-text hover:bg-moss/5 hover:text-moss dark:hover:bg-dark-surface dark:hover:text-moss"}`}
+                onClick={() => setIsMobileMenuOpen(false)}>
                 {link.name}
               </Link>
             ))}
-            <div className="pt-4 mt-4 border-t border-moss/10">
+            <div className="pt-4 mt-4 border-t border-moss/10 dark:border-dark-border">
+              <div className="px-3 py-3">
+                <ThemeToggle />
+              </div>
+            </div>
+            <div className="pt-4 mt-4 border-t border-moss/10 dark:border-dark-border">
               {isAuthenticated ? (
                 <>
                   <Link
                     to={user?.role === "ADMIN" ? "/admin" : "/dashboard"}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="block px-3 py-3 text-base font-medium text-charcoal-light hover:text-moss"
-                  >
+                    className="block px-3 py-3 text-base font-medium text-charcoal-light hover:text-moss dark:text-dark-text dark:hover:text-moss">
                     Dashboard
                   </Link>
                   <button
                     onClick={logout}
-                    className="w-full text-left px-3 py-3 text-base font-medium text-charcoal-light hover:text-moss"
-                  >
+                    className="w-full text-left px-3 py-3 text-base font-medium text-charcoal-light hover:text-moss dark:text-dark-text dark:hover:text-moss">
                     Sair
                   </button>
                 </>
@@ -127,8 +126,7 @@ export function Header() {
                 <Link
                   to="/login"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="block px-3 py-3 text-base font-medium text-charcoal-light hover:text-moss"
-                >
+                  className="block px-3 py-3 text-base font-medium text-charcoal-light hover:text-moss">
                   Entrar
                 </Link>
               )}
