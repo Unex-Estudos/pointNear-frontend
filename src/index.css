@@ -1,22 +1,79 @@
 /* @import url() FONT IMPORTS MUST ALWAYS BE AT THE VERY TOP OF THIS FILE, ABOVE THE TAILWIND IMPORTS — DO NOT DELETE THIS COMMENT */
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&display=swap');
-@import url('https://unpkg.com/leaflet@1.9.4/dist/leaflet.css');
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&display=swap");
+@import url("https://unpkg.com/leaflet@1.9.4/dist/leaflet.css");
 
 /* CRITICAL: THE FOLLOWING TAILWIND IMPORTS MUST NEVER BE DELETED OR REORDERED — DO NOT DELETE THIS COMMENT */
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
 
 /* END TAILWIND IMPORTS — ALL OTHER CSS MUST GO BELOW THIS LINE */
 
 @layer base {
+  html {
+    color: #333333;
+  }
+  html.dark {
+    color: #ede8df;
+  }
   body {
     @apply bg-cream text-charcoal font-sans antialiased;
   }
-  h1, h2, h3, h4, h5, h6 {
+  html.dark body {
+    @apply bg-dark-bg text-dark-text;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-serif text-charcoal;
   }
+  html.dark body h1,
+  html.dark body h2,
+  html.dark body h3,
+  html.dark body h4,
+  html.dark body h5,
+  html.dark body h6 {
+    @apply text-dark-text;
+  }
 }
+
+body.dark .bg-white {
+  background-color: #172318;
+}
+body.dark .bg-moss-50 {
+  background-color: rgba(38, 57, 38, 0.55);
+}
+.dark body .text-charcoal {
+  color: #B3A487;
+}
+.dark body .text-charcoal-light {
+  color: #B3A487;
+}
+.dark body .bg-white {
+  background-color: #172318;
+}
+.dark body .bg-moss-50 {
+  background-color: rgba(38, 57, 38, 0.55);
+}
+.dark body .bg-cream {
+  background-color: #0f1a14;
+}
+.dark body .border-moss\/10 {
+  border-color: rgba(143, 168, 152, 0.14);
+}
+.dark body .text-moss-200 {
+  color: #B3A487;
+}
+.dark body .text-moss-300 {
+  color: #B3A487;
+}
+.dark body .text-moss-50 {
+  color: #B3A487;
+}
+
 /* Custom scrollbar for horizontal scrolling areas */
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
