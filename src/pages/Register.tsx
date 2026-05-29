@@ -73,8 +73,6 @@ export function Register() {
   const [step, setStep] = useState(screenInit.step ?? 1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isGeocoding, setIsGeocoding] = useState(false);
-  const [isFetchingCep, setIsFetchingCep] = useState(false);
-  const [cepError, setCepError] = useState("");
   const [categories, setCategories] = useState<Category[]>([]);
   const [submitError, setSubmitError] = useState("");
   const [stepError, setStepError] = useState("");
@@ -102,42 +100,6 @@ export function Register() {
       .catch(() => setCategories([]));
   }, []);
 
-  // ViaCEP: busca automática quando CEP atingir 8 dígitos
-  useEffect(() => {
-    const cleanCep = formData.cep.replace(/\D/g, "");
-
-    if (cleanCep.length !== 8) return;
-
-    const fetchCep = async () => {
-      setIsFetchingCep(true);
-      setCepError("");
-
-      try {
-        const res = await fetch(`https://viacep.com.br/ws/${cleanCep}/json/`);
-        const data = await res.json();
-
-        if (data.erro) {
-          setCepError("CEP não encontrado. Verifique e tente novamente.");
-          return;
-        }
-
-        setFormData((prev) => ({
-          ...prev,
-          street: data.logradouro || prev.street,
-          neighborhood: data.bairro || prev.neighborhood,
-          city: data.localidade || prev.city,
-          state: data.uf || prev.state,
-        }));
-      } catch {
-        setCepError("Erro ao buscar CEP. Preencha o endereço manualmente.");
-      } finally {
-        setIsFetchingCep(false);
-      }
-    };
-
-    fetchCep();
-  }, [formData.cep]);
-
   const handleInputChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -147,14 +109,14 @@ export function Register() {
     setFormData((prev) => ({ ...prev, [name]: value }));
     // Limpa erro do step ao usuário começar a corrigir
     if (stepError) setStepError("");
-    // Limpa erro de CEP ao editar o campo
-    if (name === "cep") setCepError("");
   };
 
   const validateStep = (currentStep: number): string | null => {
     if (currentStep === 1) {
       if (!formData.name.trim()) return "Informe o nome do estabelecimento.";
       if (!formData.description.trim()) return "Informe uma descrição.";
+      if (formData.description.trim().length < 18)
+        return "A descrição deve ter pelo menos 18 caracteres.";
     }
     if (currentStep === 2) {
       if (!formData.category) return "Selecione uma categoria.";
@@ -346,9 +308,22 @@ export function Register() {
                             rows={4}
                             className="w-full px-4 py-3 rounded-xl border border-moss-200 focus:border-terracotta focus:ring-1 focus:ring-terracotta outline-none transition-all bg-white resize-none"
                           />
-                          <p className="text-xs text-charcoal-light mt-1">
-                            Máximo de 300 caracteres.
-                          </p>
+                          <div className="flex justify-between mt-1">
+                            <p
+                              className={`text-xs ${
+                                formData.description.trim().length < 18
+                                  ? "text-red-500"
+                                  : "text-emerald-600"
+                              }`}
+                            >
+                              {formData.description.trim().length < 18
+                                ? `Mínimo de 18 caracteres (${formData.description.trim().length}/18)`
+                                : "Mínimo de 18 caracteres ✓"}
+                            </p>
+                            <p className="text-xs text-charcoal-light">
+                              {formData.description.length}/300
+                            </p>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -405,42 +380,19 @@ export function Register() {
                         <hr className="border-moss/10" />
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                          {/* CEP com feedback de loading e erro */}
                           <div className="md:col-span-1">
                             <label className="block text-sm font-semibold text-moss-900 mb-2">
                               CEP *
                             </label>
-                            <div className="relative">
-                              <input
-                                type="text"
-                                name="cep"
-                                value={formData.cep}
-                                onChange={handleInputChange}
-                                placeholder="00000-000"
-                                maxLength={9}
-                                className={`w-full h-12 px-4 pr-10 rounded-2xl border bg-white shadow-sm outline-none transition-all focus:ring-4 ${
-                                  cepError
-                                    ? "border-red-400 focus:border-red-400 focus:ring-red-100"
-                                    : "border-moss-200 focus:border-terracotta focus:ring-terracotta/10"
-                                }`}
-                              />
-                              {isFetchingCep && (
-                                <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                                  <Loader2
-                                    size={18}
-                                    className="animate-spin text-terracotta"
-                                  />
-                                </div>
-                              )}
-                            </div>
-                            {cepError && (
-                              <p className="text-xs text-red-500 mt-1 flex items-center gap-1">
-                                <AlertCircle size={12} />
-                                {cepError}
-                              </p>
-                            )}
+                            <input
+                              type="text"
+                              name="cep"
+                              value={formData.cep}
+                              onChange={handleInputChange}
+                              placeholder="00000-000"
+                              className="w-full h-12 px-4 rounded-2xl border border-moss-200 bg-white shadow-sm focus:border-terracotta focus:ring-4 focus:ring-terracotta/10 outline-none transition-all"
+                            />
                           </div>
-
                           <div className="md:col-span-1">
                             <label className="block text-sm font-semibold text-moss-900 mb-2">
                               Cidade *
