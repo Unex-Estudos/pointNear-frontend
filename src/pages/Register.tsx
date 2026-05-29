@@ -72,7 +72,9 @@ export function Register() {
   const screenInit = useScreenInit() as { step?: number };
   const [step, setStep] = useState(screenInit.step ?? 1);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isGeocoding, setIsGeocoding] = useState(false);
+  const [isGeocoding, setIsGeocoding] = useState(false);´
+  const [isFetchingCep, setIsFetchingCep] = useState(false);
+  const [cepError, setCepError] = useState("");
   const [categories, setCategories] = useState<Category[]>([]);
   const [submitError, setSubmitError] = useState("");
   const [stepError, setStepError] = useState("");
@@ -100,6 +102,41 @@ export function Register() {
       .catch(() => setCategories([]));
   }, []);
 
+  useEffect(() => {
+    const cleanCep = formData.cep.replace(/\D/g, "");
+
+    if (cleanCep.length !== 8) return;
+
+    const fetchCep = async () => {
+      setIsFetchingCep(true);
+      setCepError("");
+
+      try {
+        const res = await fetch(`https://viacep.com.br/ws/${cleanCep}/json/`);
+        const data = await res.json();
+
+        if (data.erro) {
+          setCepError("CEP não encontrado. Verifique e tente novamente.");
+          return;
+        }
+
+        setFormData((prev) => ({
+          ...prev,
+          street: data.logradouro || prev.street,
+          neighborhood: data.bairro || prev.neighborhood,
+          city: data.localidade || prev.city,
+          state: data.uf || prev.state,
+        }));
+      } catch {
+        setCepError("Erro ao buscar CEP. Preencha o endereço manualmente.");
+      } finally {
+        setIsFetchingCep(false);
+      }
+    };
+
+    fetchCep();
+  }, [formData.cep]);
+
   const handleInputChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -109,6 +146,7 @@ export function Register() {
     setFormData((prev) => ({ ...prev, [name]: value }));
     // Limpa erro do step ao usuário começar a corrigir
     if (stepError) setStepError("");
+    if (name === "cep") setCepError("");
   };
 
   const validateStep = (currentStep: number): string | null => {
@@ -384,15 +422,37 @@ export function Register() {
                             <label className="block text-sm font-semibold text-moss-900 mb-2">
                               CEP *
                             </label>
-                            <input
-                              type="text"
-                              name="cep"
-                              value={formData.cep}
-                              onChange={handleInputChange}
-                              placeholder="00000-000"
-                              className="w-full h-12 px-4 rounded-2xl border border-moss-200 bg-white shadow-sm focus:border-terracotta focus:ring-4 focus:ring-terracotta/10 outline-none transition-all"
-                            />
+                            <div className="relative">
+                              <input
+                                type="text"
+                                name="cep"
+                                value={formData.cep}
+                                onChange={handleInputChange}
+                                placeholder="00000-000"
+                                maxLength={9}
+                                className={`w-full h-12 px-4 pr-10 rounded-2xl border bg-white shadow-sm outline-none transition-all focus:ring-4 ${
+                                  cepError
+                                    ? "border-red-400 focus:border-red-400 focus:ring-red-100"
+                                    : "border-moss-200 focus:border-terracotta focus:ring-terracotta/10"
+                                }`}
+                              />
+                              {isFetchingCep && (
+                                <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                                  <Loader2
+                                    size={18}
+                                    className="animate-spin text-terracotta"
+                                  />
+                                </div>
+                              )}
+                            </div>
+                            {cepError && (
+                              <p className="text-xs text-red-500 mt-1 flex items-center gap-1">
+                                <AlertCircle size={12} />
+                                {cepError}
+                              </p>
+                            )}
                           </div>
+
                           <div className="md:col-span-1">
                             <label className="block text-sm font-semibold text-moss-900 mb-2">
                               Cidade *
