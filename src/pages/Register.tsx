@@ -72,7 +72,7 @@ export function Register() {
   const screenInit = useScreenInit() as { step?: number };
   const [step, setStep] = useState(screenInit.step ?? 1);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isGeocoding, setIsGeocoding] = useState(false);´
+  const [isGeocoding, setIsGeocoding] = useState(false);
   const [isFetchingCep, setIsFetchingCep] = useState(false);
   const [cepError, setCepError] = useState("");
   const [categories, setCategories] = useState<Category[]>([]);
