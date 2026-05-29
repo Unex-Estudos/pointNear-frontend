@@ -102,7 +102,6 @@ export function Register() {
       .catch(() => setCategories([]));
   }, []);
 
-  // ViaCEP: busca automática quando CEP atingir 8 dígitos
   useEffect(() => {
     const cleanCep = formData.cep.replace(/\D/g, "");
 
@@ -147,7 +146,6 @@ export function Register() {
     setFormData((prev) => ({ ...prev, [name]: value }));
     // Limpa erro do step ao usuário começar a corrigir
     if (stepError) setStepError("");
-    // Limpa erro de CEP ao editar o campo
     if (name === "cep") setCepError("");
   };
 
@@ -155,6 +153,8 @@ export function Register() {
     if (currentStep === 1) {
       if (!formData.name.trim()) return "Informe o nome do estabelecimento.";
       if (!formData.description.trim()) return "Informe uma descrição.";
+      if (formData.description.trim().length < 18)
+        return "A descrição deve ter pelo menos 18 caracteres.";
     }
     if (currentStep === 2) {
       if (!formData.category) return "Selecione uma categoria.";
@@ -346,9 +346,22 @@ export function Register() {
                             rows={4}
                             className="w-full px-4 py-3 rounded-xl border border-moss-200 focus:border-terracotta focus:ring-1 focus:ring-terracotta outline-none transition-all bg-white resize-none"
                           />
-                          <p className="text-xs text-charcoal-light mt-1">
-                            Máximo de 300 caracteres.
-                          </p>
+                          <div className="flex justify-between mt-1">
+                            <p
+                              className={`text-xs ${
+                                formData.description.trim().length < 18
+                                  ? "text-red-500"
+                                  : "text-emerald-600"
+                              }`}
+                            >
+                              {formData.description.trim().length < 18
+                                ? `Mínimo de 18 caracteres (${formData.description.trim().length}/18)`
+                                : "Mínimo de 18 caracteres ✓"}
+                            </p>
+                            <p className="text-xs text-charcoal-light">
+                              {formData.description.length}/300
+                            </p>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -405,7 +418,6 @@ export function Register() {
                         <hr className="border-moss/10" />
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                          {/* CEP com feedback de loading e erro */}
                           <div className="md:col-span-1">
                             <label className="block text-sm font-semibold text-moss-900 mb-2">
                               CEP *
