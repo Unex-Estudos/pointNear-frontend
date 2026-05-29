@@ -49,7 +49,7 @@ export function ReviewCard({ review, currentUserId, isDeleting, onDelete, onRefr
   };
 
   return (
-    <div className="bg-white p-5 rounded-2xl shadow-sm border border-moss/10">
+    <div className="bg-white dark:bg-dark-surface p-5 rounded-2xl shadow-sm border border-moss/10 dark:border-dark-border">
       {isEditing ? (
         /* ── Modo edição ── */
         <div className="space-y-3">
@@ -64,7 +64,7 @@ export function ReviewCard({ review, currentUserId, isDeleting, onDelete, onRefr
             value={editComment}
             onChange={(e) => setEditComment(e.target.value)}
             rows={3}
-            className="w-full border border-moss/20 rounded-xl px-4 py-3 outline-none focus:border-terracotta bg-white resize-none text-sm"
+            className="w-full border border-moss/20 dark:border-dark-border rounded-xl px-4 py-3 outline-none focus:border-terracotta bg-white dark:bg-dark-elevated text-charcoal dark:text-dark-text placeholder:text-moss-400 dark:placeholder:text-dark-muted resize-none text-sm"
           />
           {editError && <p className="text-sm text-red-600">{editError}</p>}
           <div className="flex gap-2">
@@ -78,7 +78,7 @@ export function ReviewCard({ review, currentUserId, isDeleting, onDelete, onRefr
             <button
               type="button"
               onClick={handleEditCancel}
-              className="bg-moss-50 hover:bg-moss-100 text-moss-700 px-4 py-2 rounded-xl text-sm font-medium transition-colors">
+              className="bg-moss-50 dark:bg-dark-elevated hover:bg-moss-100 text-moss-700 px-4 py-2 rounded-xl text-sm font-medium transition-colors">
               Cancelar
             </button>
           </div>
@@ -93,8 +93,8 @@ export function ReviewCard({ review, currentUserId, isDeleting, onDelete, onRefr
                 {review.authorName.charAt(0).toUpperCase()}
               </div>
               <div>
-                <div className="font-medium text-charcoal">{review.authorName}</div>
-                <div className="text-xs text-charcoal-light">
+                <div className="font-medium text-charcoal dark:text-dark-text">{review.authorName}</div>
+                <div className="text-xs text-charcoal-light dark:text-dark-muted">
                   {new Date(review.date).toLocaleDateString('pt-BR')}
                 </div>
               </div>
@@ -118,7 +118,7 @@ export function ReviewCard({ review, currentUserId, isDeleting, onDelete, onRefr
                     type="button"
                     onClick={() => setIsEditing(true)}
                     title="Editar avaliação"
-                    className="p-1.5 rounded-lg text-moss-400 hover:text-moss-700 hover:bg-moss-50 transition-colors">
+                    className="p-1.5 rounded-lg text-moss-400 hover:text-moss-700 hover:bg-moss-50 dark:hover:bg-dark-elevated dark:bg-dark-elevated transition-colors">
                     <Pencil size={15} />
                   </button>
                   <button
@@ -134,7 +134,7 @@ export function ReviewCard({ review, currentUserId, isDeleting, onDelete, onRefr
             </div>
           </div>
 
-          <p className="text-charcoal text-sm leading-relaxed">{review.comment}</p>
+          <p className="text-charcoal dark:text-dark-text text-sm leading-relaxed">{review.comment}</p>
         </>
       )}
     </div>

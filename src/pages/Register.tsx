@@ -18,7 +18,6 @@ import { categoriesService } from "../services/categories.service";
 import { businessesService } from "../services/businesses.service";
 import { Category } from "../types";
 import { useScreenInit } from "../utils/useScreenInit.js";
-import { uploadService } from "../services/upload.service";
 
 // Geocodifica um endereço usando Nominatim (OpenStreetMap) — gratuito, sem chave
 async function geocodeAddress(params: {
@@ -92,7 +91,6 @@ export function Register() {
     whatsapp: "",
     phone: "",
     instagram: "",
-    photos: [] as string[],
   });
 
   useEffect(() => {
@@ -190,7 +188,7 @@ export function Register() {
           phone: formData.phone,
           instagram: formData.instagram,
         },
-        photos: formData.photos,
+        photos: [],
         services: [],
         priceRange: "$$",
       });
@@ -215,46 +213,50 @@ export function Register() {
   ];
 
   return (
-    <div className="min-h-screen bg-cream py-12">
+    <div className="min-h-screen bg-cream dark:bg-dark-bg py-12 text-charcoal dark:text-dark-text dark:text-dark-text">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-10">
-          <h1 className="text-3xl font-serif font-bold text-moss-900 mb-2">
+          <h1 className="text-3xl font-serif font-bold text-moss-900 dark:text-dark-text mb-2">
             Cadastre seu negócio
           </h1>
-          <p className="text-charcoal-light">
+          <p className="text-charcoal-light dark:text-dark-muted">
             É rápido, gratuito e ajuda clientes a te encontrarem.
           </p>
         </div>
 
         {step < 6 && (
-          <div className="bg-white rounded-3xl shadow-soft border border-moss/5 overflow-hidden">
+          <div className="bg-white dark:bg-dark-surface rounded-3xl shadow-soft border border-moss/5 dark:border-dark-border overflow-hidden">
             {/* Progress Bar */}
-            <div className="bg-moss-50/50 border-b border-moss/10 p-4 md:p-6">
+            <div className="bg-moss-50 dark:bg-dark-elevated/50 border-b border-moss/10 dark:border-dark-border p-4 md:p-6">
               <div className="flex items-center justify-between relative">
-                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-moss-200 -z-10 rounded-full"></div>
+                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-moss-200 dark:bg-dark-border -z-10 rounded-full"></div>
                 <div
                   className="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-terracotta -z-10 rounded-full transition-all duration-500"
                   style={{
                     width: `${((step - 1) / (steps.length - 1)) * 100}%`,
-                  }}></div>
+                  }}
+                ></div>
 
                 {steps.map((s) => (
                   <div
                     key={s.id}
-                    className="flex flex-col items-center gap-2 bg-moss-50/50">
+                    className="flex flex-col items-center gap-2 bg-moss-50 dark:bg-dark-elevated/50"
+                  >
                     <div
                       className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-300 ${
                         step >= s.id
                           ? "bg-terracotta text-white shadow-md"
-                          : "bg-white text-moss-400 border-2 border-moss-200"
-                      }`}>
+                          : "bg-white dark:bg-dark-surface text-moss-400 dark:text-dark-muted border-2 border-moss-200 dark:border-dark-border"
+                      }`}
+                    >
                       {step > s.id ? <CheckCircle2 size={20} /> : s.icon}
                     </div>
                     <span
                       className={`text-xs font-medium hidden md:block ${
-                        step >= s.id ? "text-moss-900" : "text-moss-400"
-                      }`}>
+                        step >= s.id ? "text-moss-900 dark:text-dark-text" : "text-moss-400 dark:text-dark-muted"
+                      }`}
+                    >
                       {s.title}
                     </span>
                   </div>
@@ -272,14 +274,15 @@ export function Register() {
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -20 }}
-                    className="space-y-6">
+                    className="space-y-6"
+                  >
                     <div>
-                      <h2 className="text-2xl font-serif font-bold text-moss-900 mb-6">
+                      <h2 className="text-2xl font-serif font-bold text-moss-900 dark:text-dark-text mb-6">
                         Dados do negócio
                       </h2>
                       <div className="space-y-4">
                         <div>
-                          <label className="block text-sm font-medium text-moss-900 mb-1">
+                          <label className="block text-sm font-medium text-moss-900 dark:text-dark-text mb-1">
                             Nome do estabelecimento *
                           </label>
                           <input
@@ -288,11 +291,11 @@ export function Register() {
                             value={formData.name}
                             onChange={handleInputChange}
                             placeholder="Ex: Padaria Pão & Prosa"
-                            className="w-full px-4 py-3 rounded-xl border border-moss-200 focus:border-terracotta focus:ring-1 focus:ring-terracotta outline-none transition-all bg-white"
+                            className="w-full px-4 py-3 rounded-xl border border-moss-200 dark:border-dark-border focus:border-terracotta focus:ring-1 focus:ring-terracotta outline-none transition-all bg-white dark:bg-dark-elevated text-charcoal dark:text-dark-text placeholder:text-moss-400 dark:placeholder:text-dark-muted"
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-moss-900 mb-1">
+                          <label className="block text-sm font-medium text-moss-900 dark:text-dark-text mb-1">
                             Descrição curta *
                           </label>
                           <textarea
@@ -301,9 +304,9 @@ export function Register() {
                             onChange={handleInputChange}
                             placeholder="Conte um pouco sobre o que você oferece..."
                             rows={4}
-                            className="w-full px-4 py-3 rounded-xl border border-moss-200 focus:border-terracotta focus:ring-1 focus:ring-terracotta outline-none transition-all bg-white resize-none"
+                            className="w-full px-4 py-3 rounded-xl border border-moss-200 dark:border-dark-border focus:border-terracotta focus:ring-1 focus:ring-terracotta outline-none transition-all bg-white dark:bg-dark-elevated text-charcoal dark:text-dark-text placeholder:text-moss-400 dark:placeholder:text-dark-muted resize-none"
                           />
-                          <p className="text-xs text-charcoal-light mt-1">
+                          <p className="text-xs text-charcoal-light dark:text-dark-muted mt-1">
                             Máximo de 300 caracteres.
                           </p>
                         </div>
@@ -319,21 +322,23 @@ export function Register() {
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -20 }}
-                    className="space-y-8">
+                    className="space-y-8"
+                  >
                     <div>
-                      <h2 className="text-2xl font-serif font-bold text-moss-900 mb-6">
+                      <h2 className="text-2xl font-serif font-bold text-moss-900 dark:text-dark-text mb-6">
                         Categoria e Localização
                       </h2>
                       <div className="space-y-6">
                         <div>
-                          <label className="block text-sm font-medium text-moss-900 mb-1">
+                          <label className="block text-sm font-medium text-moss-900 dark:text-dark-text mb-1">
                             Categoria principal *
                           </label>
                           <select
                             name="category"
                             value={formData.category}
                             onChange={handleInputChange}
-                            className="w-full px-4 py-3 rounded-xl border border-moss-200 focus:border-terracotta focus:ring-1 focus:ring-terracotta outline-none transition-all bg-white">
+                            className="w-full px-4 py-3 rounded-xl border border-moss-200 dark:border-dark-border focus:border-terracotta focus:ring-1 focus:ring-terracotta outline-none transition-all bg-white dark:bg-dark-elevated text-charcoal dark:text-dark-text placeholder:text-moss-400 dark:placeholder:text-dark-muted"
+                          >
                             <option value="">Selecione uma categoria</option>
                             {categories.map((c) => (
                               <option key={c.slug} value={c.slug}>
@@ -344,7 +349,7 @@ export function Register() {
                         </div>
 
                         <div>
-                          <label className="block text-sm font-medium text-moss-900 mb-1">
+                          <label className="block text-sm font-medium text-moss-900 dark:text-dark-text mb-1">
                             Subcategorias (opcional)
                           </label>
                           <input
@@ -353,15 +358,15 @@ export function Register() {
                             value={formData.subcategories}
                             onChange={handleInputChange}
                             placeholder="Ex: Pães artesanais, Cafeteria (separados por vírgula)"
-                            className="w-full px-4 py-3 rounded-xl border border-moss-200 focus:border-terracotta focus:ring-1 focus:ring-terracotta outline-none transition-all bg-white"
+                            className="w-full px-4 py-3 rounded-xl border border-moss-200 dark:border-dark-border focus:border-terracotta focus:ring-1 focus:ring-terracotta outline-none transition-all bg-white dark:bg-dark-elevated text-charcoal dark:text-dark-text placeholder:text-moss-400 dark:placeholder:text-dark-muted"
                           />
                         </div>
 
-                        <hr className="border-moss/10" />
+                        <hr className="border-moss/10 dark:border-dark-border" />
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                           <div className="md:col-span-1">
-                            <label className="block text-sm font-semibold text-moss-900 mb-2">
+                            <label className="block text-sm font-semibold text-moss-900 dark:text-dark-text mb-2">
                               CEP *
                             </label>
                             <input
@@ -370,11 +375,11 @@ export function Register() {
                               value={formData.cep}
                               onChange={handleInputChange}
                               placeholder="00000-000"
-                              className="w-full h-12 px-4 rounded-2xl border border-moss-200 bg-white shadow-sm focus:border-terracotta focus:ring-4 focus:ring-terracotta/10 outline-none transition-all"
+                              className="w-full h-12 px-4 rounded-2xl border border-moss-200 dark:border-dark-border bg-white dark:bg-dark-elevated text-charcoal dark:text-dark-text placeholder:text-moss-400 dark:placeholder:text-dark-muted shadow-sm focus:border-terracotta focus:ring-4 focus:ring-terracotta/10 outline-none transition-all"
                             />
                           </div>
                           <div className="md:col-span-1">
-                            <label className="block text-sm font-semibold text-moss-900 mb-2">
+                            <label className="block text-sm font-semibold text-moss-900 dark:text-dark-text mb-2">
                               Cidade *
                             </label>
                             <input
@@ -383,11 +388,11 @@ export function Register() {
                               value={formData.city}
                               onChange={handleInputChange}
                               placeholder="Salvador"
-                              className="w-full h-12 px-4 rounded-2xl border border-moss-200 bg-white shadow-sm focus:border-terracotta focus:ring-4 focus:ring-terracotta/10 outline-none transition-all"
+                              className="w-full h-12 px-4 rounded-2xl border border-moss-200 dark:border-dark-border bg-white dark:bg-dark-elevated text-charcoal dark:text-dark-text placeholder:text-moss-400 dark:placeholder:text-dark-muted shadow-sm focus:border-terracotta focus:ring-4 focus:ring-terracotta/10 outline-none transition-all"
                             />
                           </div>
                           <div className="md:col-span-1">
-                            <label className="block text-sm font-semibold text-moss-900 mb-2">
+                            <label className="block text-sm font-semibold text-moss-900 dark:text-dark-text mb-2">
                               Estado *
                             </label>
                             <input
@@ -396,11 +401,11 @@ export function Register() {
                               value={formData.state}
                               onChange={handleInputChange}
                               placeholder="BA"
-                              className="w-full h-12 px-4 rounded-2xl border border-moss-200 bg-white shadow-sm focus:border-terracotta focus:ring-4 focus:ring-terracotta/10 outline-none transition-all"
+                              className="w-full h-12 px-4 rounded-2xl border border-moss-200 dark:border-dark-border bg-white dark:bg-dark-elevated text-charcoal dark:text-dark-text placeholder:text-moss-400 dark:placeholder:text-dark-muted shadow-sm focus:border-terracotta focus:ring-4 focus:ring-terracotta/10 outline-none transition-all"
                             />
                           </div>
                           <div className="md:col-span-2">
-                            <label className="block text-sm font-semibold text-moss-900 mb-2">
+                            <label className="block text-sm font-semibold text-moss-900 dark:text-dark-text mb-2">
                               Rua/Avenida *
                             </label>
                             <input
@@ -409,11 +414,11 @@ export function Register() {
                               value={formData.street}
                               onChange={handleInputChange}
                               placeholder="Rua Exemplo"
-                              className="w-full h-12 px-4 rounded-2xl border border-moss-200 bg-white shadow-sm focus:border-terracotta focus:ring-4 focus:ring-terracotta/10 outline-none transition-all"
+                              className="w-full h-12 px-4 rounded-2xl border border-moss-200 dark:border-dark-border bg-white dark:bg-dark-elevated text-charcoal dark:text-dark-text placeholder:text-moss-400 dark:placeholder:text-dark-muted shadow-sm focus:border-terracotta focus:ring-4 focus:ring-terracotta/10 outline-none transition-all"
                             />
                           </div>
                           <div className="md:col-span-1">
-                            <label className="block text-sm font-semibold text-moss-900 mb-2">
+                            <label className="block text-sm font-semibold text-moss-900 dark:text-dark-text mb-2">
                               Número *
                             </label>
                             <input
@@ -422,11 +427,11 @@ export function Register() {
                               value={formData.number}
                               onChange={handleInputChange}
                               placeholder="123"
-                              className="w-full h-12 px-4 rounded-2xl border border-moss-200 bg-white shadow-sm focus:border-terracotta focus:ring-4 focus:ring-terracotta/10 outline-none transition-all"
+                              className="w-full h-12 px-4 rounded-2xl border border-moss-200 dark:border-dark-border bg-white dark:bg-dark-elevated text-charcoal dark:text-dark-text placeholder:text-moss-400 dark:placeholder:text-dark-muted shadow-sm focus:border-terracotta focus:ring-4 focus:ring-terracotta/10 outline-none transition-all"
                             />
                           </div>
                           <div className="md:col-span-3">
-                            <label className="block text-sm font-semibold text-moss-900 mb-2">
+                            <label className="block text-sm font-semibold text-moss-900 dark:text-dark-text mb-2">
                               Bairro *
                             </label>
                             <input
@@ -435,7 +440,7 @@ export function Register() {
                               value={formData.neighborhood}
                               onChange={handleInputChange}
                               placeholder="Barra"
-                              className="w-full h-12 px-4 rounded-2xl border border-moss-200 bg-white shadow-sm focus:border-terracotta focus:ring-4 focus:ring-terracotta/10 outline-none transition-all"
+                              className="w-full h-12 px-4 rounded-2xl border border-moss-200 dark:border-dark-border bg-white dark:bg-dark-elevated text-charcoal dark:text-dark-text placeholder:text-moss-400 dark:placeholder:text-dark-muted shadow-sm focus:border-terracotta focus:ring-4 focus:ring-terracotta/10 outline-none transition-all"
                             />
                           </div>
                         </div>
@@ -451,15 +456,16 @@ export function Register() {
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -20 }}
-                    className="space-y-8">
+                    className="space-y-8"
+                  >
                     <div>
-                      <h2 className="text-2xl font-serif font-bold text-moss-900 mb-6">
+                      <h2 className="text-2xl font-serif font-bold text-moss-900 dark:text-dark-text mb-6">
                         Contato e Horários
                       </h2>
                       <div className="space-y-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div>
-                            <label className="block text-sm font-medium text-moss-900 mb-1">
+                            <label className="block text-sm font-medium text-moss-900 dark:text-dark-text mb-1">
                               WhatsApp *
                             </label>
                             <input
@@ -468,11 +474,11 @@ export function Register() {
                               value={formData.whatsapp}
                               onChange={handleInputChange}
                               placeholder="(71) 90000-0000"
-                              className="w-full px-4 py-3 rounded-xl border border-moss-200 focus:border-terracotta focus:ring-1 focus:ring-terracotta outline-none transition-all bg-white"
+                              className="w-full px-4 py-3 rounded-xl border border-moss-200 dark:border-dark-border focus:border-terracotta focus:ring-1 focus:ring-terracotta outline-none transition-all bg-white dark:bg-dark-elevated text-charcoal dark:text-dark-text placeholder:text-moss-400 dark:placeholder:text-dark-muted"
                             />
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-moss-900 mb-1">
+                            <label className="block text-sm font-medium text-moss-900 dark:text-dark-text mb-1">
                               Instagram (opcional)
                             </label>
                             <input
@@ -481,20 +487,20 @@ export function Register() {
                               value={formData.instagram}
                               onChange={handleInputChange}
                               placeholder="@seunegocio"
-                              className="w-full px-4 py-3 rounded-xl border border-moss-200 focus:border-terracotta focus:ring-1 focus:ring-terracotta outline-none transition-all bg-white"
+                              className="w-full px-4 py-3 rounded-xl border border-moss-200 dark:border-dark-border focus:border-terracotta focus:ring-1 focus:ring-terracotta outline-none transition-all bg-white dark:bg-dark-elevated text-charcoal dark:text-dark-text placeholder:text-moss-400 dark:placeholder:text-dark-muted"
                             />
                           </div>
                         </div>
 
-                        <hr className="border-moss/10" />
+                        <hr className="border-moss/10 dark:border-dark-border" />
 
                         <div>
-                          <h3 className="text-lg font-serif font-bold text-moss-900 mb-4 flex items-center gap-2">
+                          <h3 className="text-lg font-serif font-bold text-moss-900 dark:text-dark-text mb-4 flex items-center gap-2">
                             <Clock size={18} className="text-terracotta" />{" "}
                             Horário de Funcionamento
                           </h3>
-                          <div className="bg-moss-50 rounded-xl p-4 border border-moss/10">
-                            <div className="flex items-start gap-3 text-moss-700">
+                          <div className="bg-moss-50 dark:bg-dark-elevated rounded-xl p-4 border border-moss/10 dark:border-dark-border">
+                            <div className="flex items-start gap-3 text-moss-700 dark:text-dark-text">
                               <AlertCircle
                                 size={20}
                                 className="shrink-0 mt-0.5"
@@ -521,106 +527,41 @@ export function Register() {
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -20 }}
-                    className="space-y-6">
+                    className="space-y-6"
+                  >
                     <div>
-                      <h2 className="text-2xl font-serif font-bold text-moss-900 mb-6">
+                      <h2 className="text-2xl font-serif font-bold text-moss-900 dark:text-dark-text mb-6">
                         Fotos do estabelecimento
                       </h2>
-                      <p className="text-charcoal-light mb-6">
+                      <p className="text-charcoal-light dark:text-dark-muted mb-6">
                         Adicione fotos atraentes do seu espaço, produtos ou
                         serviços. A primeira foto será a capa.
                       </p>
-
-                      {/* Input de upload */}
-                      <label className="border-2 border-dashed border-moss-300 rounded-2xl p-10 text-center hover:bg-moss-50 transition-colors cursor-pointer bg-white flex flex-col items-center">
-                        <div className="w-16 h-16 bg-moss-100 text-moss-500 rounded-full flex items-center justify-center mb-4">
+                      <div className="border-2 border-dashed border-moss-300 dark:border-dark-border rounded-2xl p-10 text-center hover:bg-moss-50 dark:hover:bg-dark-elevated dark:bg-dark-elevated transition-colors cursor-pointer bg-white dark:bg-dark-surface">
+                        <div className="w-16 h-16 bg-moss-100 dark:bg-dark-elevated text-moss-500 dark:text-dark-muted rounded-full flex items-center justify-center mx-auto mb-4">
                           <Upload size={24} />
                         </div>
-                        <h3 className="text-lg font-medium text-moss-900 mb-1">
-                          Clique para selecionar fotos
+                        <h3 className="text-lg font-medium text-moss-900 dark:text-dark-text mb-1">
+                          Clique ou arraste fotos aqui
                         </h3>
-                        <p className="text-sm text-charcoal-light">
-                          JPG, PNG ou WebP, máximo 5MB por foto.
+                        <p className="text-sm text-charcoal-light dark:text-dark-muted">
+                          JPG ou PNG, máximo 5MB por foto. (Mock)
                         </p>
-                        <input
-                          type="file"
-                          accept="image/jpeg,image/png,image/webp"
-                          multiple
-                          className="hidden"
-                          onChange={async (e) => {
-                            const files = Array.from(e.target.files ?? []);
-                            if (!files.length) return;
-
-                            const uploaded: string[] = [];
-                            for (const file of files) {
-                              try {
-                                const url =
-                                  await uploadService.uploadImage(file);
-                                uploaded.push(url);
-                              } catch {
-                                setStepError(`Erro ao enviar ${file.name}`);
-                              }
-                            }
-
-                            setFormData((prev) => ({
-                              ...prev,
-                              photos: [...(prev.photos ?? []), ...uploaded],
-                            }));
-                          }}
-                        />
-                      </label>
-
-                      {/* Preview das fotos enviadas */}
-                      {formData.photos && formData.photos.length > 0 && (
-                        <div className="grid grid-cols-3 gap-4 mt-6">
-                          {formData.photos.map((url, i) => (
-                            <div
-                              key={i}
-                              className="relative aspect-square rounded-xl overflow-hidden border border-moss-200 group">
-                              <img
-                                src={url}
-                                alt={`Foto ${i + 1}`}
-                                className="w-full h-full object-cover"
-                              />
-                              {i === 0 && (
-                                <span className="absolute top-2 left-2 bg-terracotta text-white text-xs px-2 py-0.5 rounded-full font-medium">
-                                  Capa
-                                </span>
-                              )}
-                              {/* Botão remover */}
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  setFormData((prev) => ({
-                                    ...prev,
-                                    photos: prev.photos?.filter(
-                                      (_, idx) => idx !== i,
-                                    ),
-                                  }))
-                                }
-                                className="absolute top-2 right-2 bg-black/60 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-xs">
-                                ✕
-                              </button>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-
-                      {/* Placeholders vazios se não tiver fotos */}
-                      {(!formData.photos || formData.photos.length === 0) && (
-                        <div className="grid grid-cols-3 gap-4 mt-6">
-                          {[1, 2, 3].map((i) => (
-                            <div
-                              key={i}
-                              className="aspect-square bg-moss-100 rounded-xl border border-moss-200 flex items-center justify-center text-moss-400">
-                              <ImageIcon size={24} />
-                            </div>
-                          ))}
-                        </div>
-                      )}
+                      </div>
+                      <div className="grid grid-cols-3 gap-4 mt-6">
+                        {[1, 2, 3].map((i) => (
+                          <div
+                            key={i}
+                            className="aspect-square bg-moss-100 dark:bg-dark-elevated rounded-xl border border-moss-200 dark:border-dark-border flex items-center justify-center text-moss-400 dark:text-dark-muted"
+                          >
+                            <ImageIcon size={24} />
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </motion.div>
                 )}
+
                 {/* STEP 5: Review */}
                 {step === 5 && (
                   <motion.div
@@ -628,48 +569,49 @@ export function Register() {
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -20 }}
-                    className="space-y-6">
+                    className="space-y-6"
+                  >
                     <div>
-                      <h2 className="text-2xl font-serif font-bold text-moss-900 mb-6">
+                      <h2 className="text-2xl font-serif font-bold text-moss-900 dark:text-dark-text mb-6">
                         Revisão final
                       </h2>
-                      <div className="bg-moss-50 rounded-2xl p-6 border border-moss/10 space-y-6">
+                      <div className="bg-moss-50 dark:bg-dark-elevated rounded-2xl p-6 border border-moss/10 dark:border-dark-border space-y-6">
                         <div>
-                          <h3 className="text-sm font-medium text-moss-500 uppercase tracking-wider mb-2">
+                          <h3 className="text-sm font-medium text-moss-500 dark:text-dark-muted uppercase tracking-wider mb-2">
                             Dados Básicos
                           </h3>
-                          <p className="font-serif font-bold text-xl text-moss-900">
+                          <p className="font-serif font-bold text-xl text-moss-900 dark:text-dark-text">
                             {formData.name || "Nome não preenchido"}
                           </p>
-                          <p className="text-charcoal mt-1">
+                          <p className="text-charcoal dark:text-dark-text mt-1">
                             {formData.description || "Sem descrição"}
                           </p>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                           <div>
-                            <h3 className="text-sm font-medium text-moss-500 uppercase tracking-wider mb-2">
+                            <h3 className="text-sm font-medium text-moss-500 dark:text-dark-muted uppercase tracking-wider mb-2">
                               Categoria
                             </h3>
-                            <p className="text-charcoal font-medium">
+                            <p className="text-charcoal dark:text-dark-text font-medium">
                               {categories.find(
                                 (c) => c.slug === formData.category,
                               )?.label || "Não selecionada"}
                             </p>
                           </div>
                           <div>
-                            <h3 className="text-sm font-medium text-moss-500 uppercase tracking-wider mb-2">
+                            <h3 className="text-sm font-medium text-moss-500 dark:text-dark-muted uppercase tracking-wider mb-2">
                               Contato
                             </h3>
-                            <p className="text-charcoal font-medium">
+                            <p className="text-charcoal dark:text-dark-text font-medium">
                               {formData.whatsapp || "Não preenchido"}
                             </p>
                           </div>
                         </div>
                         <div>
-                          <h3 className="text-sm font-medium text-moss-500 uppercase tracking-wider mb-2">
+                          <h3 className="text-sm font-medium text-moss-500 dark:text-dark-muted uppercase tracking-wider mb-2">
                             Endereço
                           </h3>
-                          <p className="text-charcoal">
+                          <p className="text-charcoal dark:text-dark-text">
                             {formData.street}, {formData.number} —{" "}
                             {formData.neighborhood}, {formData.city}/
                             {formData.state}
@@ -681,7 +623,8 @@ export function Register() {
                         <input type="checkbox" id="terms" className="mt-1" />
                         <label
                           htmlFor="terms"
-                          className="text-sm text-charcoal-light">
+                          className="text-sm text-charcoal-light dark:text-dark-muted"
+                        >
                           Declaro que as informações fornecidas são verdadeiras
                           e concordo com os Termos de Uso e Política de
                           Privacidade da plataforma.
@@ -694,15 +637,16 @@ export function Register() {
             </div>
 
             {/* Footer Actions */}
-            <div className="bg-moss-50/50 border-t border-moss/10 p-4 md:p-6 flex justify-between items-center">
+            <div className="bg-moss-50 dark:bg-dark-elevated/50 border-t border-moss/10 dark:border-dark-border p-4 md:p-6 flex justify-between items-center">
               <button
                 onClick={prevStep}
                 disabled={step === 1 || isSubmitting}
                 className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-colors ${
                   step === 1
                     ? "text-moss-300 cursor-not-allowed"
-                    : "text-moss-700 hover:bg-moss-100"
-                }`}>
+                    : "text-moss-700 dark:text-dark-text hover:bg-moss-100 dark:bg-dark-elevated dark:hover:bg-dark-border"
+                }`}
+              >
                 <ChevronLeft size={20} /> Voltar
               </button>
 
@@ -717,14 +661,16 @@ export function Register() {
               {step < 5 ? (
                 <button
                   onClick={nextStep}
-                  className="flex items-center gap-2 bg-moss-800 hover:bg-moss-900 text-white px-8 py-3 rounded-xl font-medium transition-colors shadow-sm">
+                  className="flex items-center gap-2 bg-moss-800 hover:bg-moss-900 text-white px-8 py-3 rounded-xl font-medium transition-colors shadow-sm"
+                >
                   Próximo <ChevronRight size={20} />
                 </button>
               ) : (
                 <button
                   onClick={handleSubmit}
                   disabled={isSubmitting}
-                  className="flex items-center gap-2 bg-terracotta hover:bg-terracotta-600 text-white px-8 py-3 rounded-xl font-medium transition-colors shadow-sm disabled:opacity-70">
+                  className="flex items-center gap-2 bg-terracotta hover:bg-terracotta-600 text-white px-8 py-3 rounded-xl font-medium transition-colors shadow-sm disabled:opacity-70"
+                >
                   {isGeocoding ? (
                     <>
                       <Loader2 size={20} className="animate-spin" /> Buscando
@@ -751,26 +697,29 @@ export function Register() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-white rounded-3xl shadow-float p-10 text-center border border-moss/5">
+            className="bg-white dark:bg-dark-surface rounded-3xl shadow-float p-10 text-center border border-moss/5 dark:border-dark-border"
+          >
             <div className="w-24 h-24 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6">
               <CheckCircle2 size={48} />
             </div>
-            <h2 className="text-3xl font-serif font-bold text-moss-900 mb-4">
+            <h2 className="text-3xl font-serif font-bold text-moss-900 dark:text-dark-text mb-4">
               Cadastro realizado com sucesso!
             </h2>
-            <p className="text-charcoal-light max-w-md mx-auto mb-8">
+            <p className="text-charcoal-light dark:text-dark-muted max-w-md mx-auto mb-8">
               Seu negócio foi enviado para análise e ficará visível na busca
               após aprovação da administração.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
                 onClick={() => navigate("/buscar")}
-                className="bg-moss-800 hover:bg-moss-900 text-white px-8 py-3 rounded-xl font-medium transition-colors">
+                className="bg-moss-800 hover:bg-moss-900 text-white px-8 py-3 rounded-xl font-medium transition-colors"
+              >
                 Buscar negócios
               </button>
               <button
                 onClick={() => navigate("/")}
-                className="bg-moss-50 hover:bg-moss-100 text-moss-800 px-8 py-3 rounded-xl font-medium transition-colors">
+                className="bg-moss-50 dark:bg-dark-elevated hover:bg-moss-100 dark:bg-dark-elevated dark:hover:bg-dark-border text-moss-800 dark:text-dark-text px-8 py-3 rounded-xl font-medium transition-colors"
+              >
                 Voltar ao início
               </button>
             </div>

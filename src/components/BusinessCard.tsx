@@ -39,7 +39,7 @@ export function BusinessCard({ business, index = 0 }: BusinessCardProps) {
 
             {/* Category Badge */}
             <div className="absolute top-3 left-3">
-              <span className="px-2.5 py-1 rounded-full text-xs font-semibold shadow-sm backdrop-blur-md bg-white/90 dark:bg-dark-surface/90 text-moss-700 dark:text-amber-100">
+              <span className="px-2.5 py-1 rounded-full text-xs font-semibold shadow-sm backdrop-blur-md bg-white/90 dark:bg-dark-elevated/90 text-moss-700 dark:text-dark-text dark:border dark:border-dark-border">
                 {business.categoryLabel ?? business.category}
               </span>
             </div>
@@ -47,7 +47,7 @@ export function BusinessCard({ business, index = 0 }: BusinessCardProps) {
             {/* Status Pill */}
             <div className="absolute top-3 right-3">
               <span
-                className={`px-2.5 py-1 rounded-full text-xs font-semibold shadow-sm flex items-center gap-1 backdrop-blur-md ${isOpen ? 'bg-emerald-100/90 text-emerald-700' : 'bg-red-100/90 text-red-700'}`}>
+                className={`px-2.5 py-1 rounded-full text-xs font-semibold shadow-sm flex items-center gap-1 backdrop-blur-md ${isOpen ? 'bg-emerald-100/90 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300 dark:border dark:border-emerald-500/30' : 'bg-red-100/90 text-red-700 dark:bg-red-500/15 dark:text-red-300 dark:border dark:border-red-500/30'}`}>
                 
                 <Clock size={12} />
                 {isOpen ? 'Aberto' : 'Fechado'}
@@ -58,27 +58,27 @@ export function BusinessCard({ business, index = 0 }: BusinessCardProps) {
           {/* Content */}
           <div className="p-5 flex flex-col flex-grow">
             <div className="flex justify-between items-start mb-2 gap-2">
-              <h3 className="font-serif font-bold text-lg text-charcoal dark:text-amber-100 leading-tight group-hover:text-terracotta transition-colors line-clamp-2">
+              <h3 className="font-serif font-bold text-lg text-charcoal dark:text-dark-text leading-tight group-hover:text-terracotta dark:group-hover:text-terracotta-300 transition-colors line-clamp-2">
                 {business.name}
               </h3>
-              <div className="flex items-center gap-1 bg-yellow-50 px-1.5 py-0.5 rounded text-yellow-700 shrink-0">
+              <div className="flex items-center gap-1 bg-yellow-50 dark:bg-yellow-500/15 px-1.5 py-0.5 rounded text-yellow-700 dark:text-yellow-300 shrink-0">
                 <Star size={14} className="fill-current" />
                 <span className="text-sm font-bold">{business.rating}</span>
               </div>
             </div>
 
-            <p className="text-charcoal-light dark:text-amber-100 text-sm line-clamp-2 mb-4 flex-grow">
+            <p className="text-charcoal-light dark:text-dark-muted text-sm line-clamp-2 mb-4 flex-grow">
               {business.description}
             </p>
 
-            <div className="mt-auto pt-4 border-t border-moss/10 flex items-center justify-between text-sm text-moss-600">
+            <div className="mt-auto pt-4 border-t border-moss/10 dark:border-dark-border flex items-center justify-between text-sm text-moss-600 dark:text-dark-muted">
               <div className="flex items-center gap-1.5">
                 <MapPin size={16} className="text-terracotta" />
                 <span className="truncate max-w-[140px]">
                   {business.address.neighborhood}
                 </span>
               </div>
-              <span className="font-medium text-moss-400">
+              <span className="font-medium text-moss-400 dark:text-dark-muted">
                 {business.priceRange}
               </span>
             </div>

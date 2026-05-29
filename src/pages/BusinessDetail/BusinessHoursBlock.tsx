@@ -17,7 +17,7 @@ export function BusinessHoursBlock({ hours }: Props) {
         return (
           <li
             key={key}
-            className={`flex justify-between text-sm ${isToday ? 'font-bold text-moss-900' : 'text-charcoal-light'}`}>
+            className={`flex justify-between text-sm ${isToday ? 'font-bold text-moss-900 dark:text-dark-text' : 'text-charcoal-light dark:text-dark-muted'}`}>
             <span className="flex items-center gap-2">
               {isToday && <span className="w-1.5 h-1.5 rounded-full bg-terracotta" />}
               {label}

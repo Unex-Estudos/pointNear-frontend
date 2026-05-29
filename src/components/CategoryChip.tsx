@@ -30,7 +30,7 @@ export function CategoryChip({
   // If active, use the category's specific colors, otherwise use a neutral/subtle style
   const activeClasses = isActive ?
   `${category.color} ring-2 ring-offset-2 ring-offset-cream dark:ring-offset-dark-bg ring-current shadow-sm` :
-  'bg-white dark:bg-dark-surface text-charcoal-light dark:text-amber-100 hover:bg-moss-50 dark:hover:bg-dark-elevated hover:text-moss border border-moss/10 dark:border-dark-border hover:border-moss/30 shadow-sm';
+  'bg-white dark:bg-dark-surface text-charcoal-light dark:text-dark-muted hover:bg-moss-50 dark:hover:bg-dark-elevated hover:text-moss dark:hover:text-dark-text border border-moss/10 dark:border-dark-border hover:border-moss/30 shadow-sm';
   return (
     <button
       onClick={onClick}
@@ -39,7 +39,7 @@ export function CategoryChip({
       
       <IconComponent
         size={iconSizes[size]}
-        className={isActive ? '' : 'text-moss-400 dark:text-amber-100'} />
+        className={isActive ? '' : 'text-moss-400 dark:text-dark-muted'} />
       
       {category.label}
     </button>);

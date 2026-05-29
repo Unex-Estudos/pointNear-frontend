@@ -9,8 +9,7 @@ export function Footer() {
   return (
     <footer className="bg-moss-900 text-moss-50 pt-16 pb-8 border-t border-moss-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
-          
+        <div className="flex justify-between md:grid-cols-3 gap-12 mb-12">
           <div className="col-span-1">
             <Link
               to="/"
@@ -109,12 +108,12 @@ export function Footer() {
               </li>
             </ul>
           </div>
-
         </div>
 
         <div className="border-t border-moss-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-moss-400 text-sm">
-            © {new Date().getFullYear()} PointNear. Todos os direitos reservados.
+            © {new Date().getFullYear()} PointNear. Todos os direitos
+            reservados.
           </p>
           <p className="text-moss-400 text-sm flex items-center gap-1">
             Feito com <span className="text-terracotta">♥</span> no Brasil
