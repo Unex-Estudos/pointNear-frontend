@@ -2,74 +2,7 @@ import React, { useState } from "react";
 import { Store, Instagram, Twitter, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-
-const TERMS_SECTIONS = [
-  {
-    title: "1. Uso da Plataforma",
-    content:
-      "O usuário concorda em utilizar a plataforma de forma responsável, ética e em conformidade com a legislação aplicável.",
-    itemsLabel: "É proibido:",
-    items: [
-      "Publicar informações falsas ou enganosas.",
-      "Utilizar linguagem ofensiva, discriminatória ou que promova ódio.",
-      "Assediar, ameaçar ou intimidar outros usuários.",
-      "Publicar conteúdo ilegal ou que viole direitos de terceiros.",
-      "Criar contas falsas para manipular avaliações ou classificações.",
-      "Tentar acessar áreas restritas da plataforma sem autorização.",
-      "Utilizar sistemas automatizados para coletar dados da plataforma sem autorização prévia.",
-    ],
-  },
-  {
-    title: "2. Avaliações e Comentários",
-    content:
-      "Os usuários são responsáveis pelo conteúdo que publicam. As avaliações devem refletir experiências reais, ser honestas e baseadas em fatos, não conter ofensas pessoais nem informações falsas ou difamatórias. Reservamo-nos o direito de remover avaliações ou comentários que violem estes Termos.",
-  },
-  {
-    title: "3. Conteúdo Publicado pelos Usuários",
-    content:
-      "Ao publicar conteúdo na plataforma, o usuário declara possuir os direitos necessários para compartilhá-lo. O usuário concede ao PointNear uma licença não exclusiva para exibir, reproduzir e distribuir esse conteúdo dentro da plataforma para fins de funcionamento do serviço.",
-  },
-  {
-    title: "4. Integridade da Plataforma",
-    content:
-      "Para proteger a confiança da comunidade, é proibido comprar ou vender avaliações, manipular classificações, publicar avaliações em troca de benefícios sem informar essa relação, ou criar múltiplas contas para influenciar resultados. Qualquer tentativa de manipulação poderá resultar em suspensão ou exclusão da conta.",
-  },
-  {
-    title: "5. Moderação",
-    content:
-      "O PointNear poderá, a seu exclusivo critério, remover conteúdos inadequados, suspender ou encerrar contas, e limitar funcionalidades de usuários que violem estes Termos.",
-  },
-  {
-    title: "6. Informações dos Locais",
-    content:
-      "Embora busquemos manter as informações atualizadas, não garantimos que horários, preços, telefones, endereços ou demais informações estejam sempre corretos. O usuário deve confirmar informações diretamente com o estabelecimento antes de tomar decisões com base nelas.",
-  },
-  {
-    title: "7. Privacidade",
-    content:
-      "Os dados pessoais dos usuários serão tratados de acordo com nossa Política de Privacidade.",
-  },
-  {
-    title: "8. Limitação de Responsabilidade",
-    content:
-      "O PointNear atua como plataforma de compartilhamento de informações e não se responsabiliza pela qualidade dos serviços prestados pelos estabelecimentos, pela veracidade de conteúdos publicados por usuários, ou por prejuízos decorrentes do uso das informações disponíveis na plataforma.",
-  },
-  {
-    title: "9. Encerramento de Conta",
-    content:
-      "O usuário pode encerrar sua conta a qualquer momento. O PointNear poderá suspender ou encerrar contas que violem estes Termos ou representem risco à segurança da plataforma e da comunidade.",
-  },
-  {
-    title: "10. Alterações dos Termos",
-    content:
-      "Podemos atualizar estes Termos periodicamente. O uso continuado da plataforma após as alterações representa a aceitação das novas condições.",
-  },
-  {
-    title: "11. Contato",
-    content:
-      "Em caso de dúvidas sobre estes Termos, entre em contato através do e-mail: pointneardevs@gmail.com",
-  },
-];
+import { TERMS_INTRO, TERMS_LAST_UPDATED, TERMS_SECTIONS } from "../utils/termServices";
 
 function TermsModal({ onClose }: { onClose: () => void }) {
   return (
@@ -81,6 +14,7 @@ function TermsModal({ onClose }: { onClose: () => void }) {
         className="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[80vh] flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
+        {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-moss/10">
           <h2 className="text-lg font-serif font-bold text-moss-900">
             Termos de Uso
@@ -96,17 +30,9 @@ function TermsModal({ onClose }: { onClose: () => void }) {
 
         <div className="overflow-y-auto px-6 py-5 space-y-5 text-sm text-charcoal leading-relaxed">
           <p className="text-xs text-charcoal-light">
-            Última atualização: 30/05/2026
+            Última atualização: {TERMS_LAST_UPDATED}
           </p>
-          <p>
-            Bem-vindo ao PointNear. Nossa plataforma permite que usuários
-            descubram, avaliem e compartilhem informações sobre
-            estabelecimentos, serviços e locais de interesse em sua região.
-          </p>
-          <p>
-            Ao acessar ou utilizar a plataforma, você concorda com estes Termos
-            de Uso.
-          </p>
+          <p>{TERMS_INTRO}</p>
 
           {TERMS_SECTIONS.map((section) => (
             <div key={section.title}>
@@ -128,6 +54,7 @@ function TermsModal({ onClose }: { onClose: () => void }) {
           ))}
         </div>
 
+        {/* Footer */}
         <div className="px-6 py-4 border-t border-moss/10 flex justify-end">
           <button
             onClick={onClose}

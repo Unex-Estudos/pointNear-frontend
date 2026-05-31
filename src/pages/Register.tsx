@@ -18,8 +18,8 @@ import { categoriesService } from "../services/categories.service";
 import { businessesService } from "../services/businesses.service";
 import { Category } from "../types";
 import { useScreenInit } from "../utils/useScreenInit.js";
+import { TERMS_INTRO, TERMS_LAST_UPDATED, TERMS_SECTIONS } from "../utils/termServices.js";
 
-// Geocodifica um endereço usando Nominatim (OpenStreetMap) — gratuito, sem chave
 async function geocodeAddress(params: {
   street: string;
   number: string;
@@ -47,7 +47,6 @@ async function geocodeAddress(params: {
     if (data.length > 0) {
       return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
     }
-    // Tenta só com CEP se o endereço completo falhar
     if (params.zip) {
       const zipUrl = `https://nominatim.openstreetmap.org/search?postalcode=${params.zip.replace(/\D/g, "")}&country=Brasil&format=json&limit=1`;
       const zipRes = await fetch(zipUrl, {
@@ -147,7 +146,6 @@ export function Register() {
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    // Limpa erro do step ao usuário começar a corrigir
     if (stepError) setStepError("");
     if (name === "cep") setCepError("");
   };
@@ -200,7 +198,6 @@ export function Register() {
     setIsSubmitting(true);
     setSubmitError("");
 
-    // Geocodifica o endereço antes de salvar
     setIsGeocoding(true);
     const coords = await geocodeAddress({
       street: formData.street,
@@ -312,10 +309,8 @@ export function Register() {
               </div>
             </div>
 
-            {/* Form Content */}
             <div className="p-6 md:p-10 min-h-[400px]">
               <AnimatePresence mode="wait">
-                {/* STEP 1: Basic Info */}
                 {step === 1 && (
                   <motion.div
                     key="step1"
@@ -376,7 +371,6 @@ export function Register() {
                   </motion.div>
                 )}
 
-                {/* STEP 2: Category & Address */}
                 {step === 2 && (
                   <motion.div
                     key="step2"
@@ -532,7 +526,6 @@ export function Register() {
                   </motion.div>
                 )}
 
-                {/* STEP 3: Contact & Hours */}
                 {step === 3 && (
                   <motion.div
                     key="step3"
@@ -603,7 +596,6 @@ export function Register() {
                   </motion.div>
                 )}
 
-                {/* STEP 4: Photos */}
                 {step === 4 && (
                   <motion.div
                     key="step4"
@@ -645,7 +637,6 @@ export function Register() {
                   </motion.div>
                 )}
 
-                {/* STEP 5: Review */}
                 {step === 5 && (
                   <motion.div
                     key="step5"
@@ -741,7 +732,6 @@ export function Register() {
                         )}
                       </div>
 
-                      {/* Modal Termos de Uso */}
                       {showTermsModal && (
                         <div
                           className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
@@ -751,7 +741,6 @@ export function Register() {
                             className="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[80vh] flex flex-col"
                             onClick={(e) => e.stopPropagation()}
                           >
-                            {/* Header */}
                             <div className="flex items-center justify-between px-6 py-4 border-b border-moss/10">
                               <h2 className="text-lg font-serif font-bold text-moss-900">
                                 Termos de Uso
@@ -764,68 +753,11 @@ export function Register() {
                               </button>
                             </div>
 
-                            {/* Conteúdo com scroll */}
-                            <div className="overflow-y-auto px-6 py-5 space-y-5 text-sm text-charcoal leading-relaxed">
-                              <p className="text-xs text-charcoal-light">Última atualização: 30/05/2026</p>
-                              <p>Bem-vindo ao PointNear. Nossa plataforma permite que usuários descubram, avaliem e compartilhem informações sobre estabelecimentos, serviços e locais de interesse em sua região.</p>
-                              <p>Ao acessar ou utilizar a plataforma, você concorda com estes Termos de Uso.</p>
+                              <div className="overflow-y-auto px-6 py-5 space-y-5 text-sm text-charcoal leading-relaxed">
+                              <p className="text-xs text-charcoal-light">Última atualização: {TERMS_LAST_UPDATED}</p>
+                              <p>{TERMS_INTRO}</p>
 
-                              {[
-                                {
-                                  title: "1. Uso da Plataforma",
-                                  content: "O usuário concorda em utilizar a plataforma de forma responsável, ética e em conformidade com a legislação aplicável.",
-                                  items: [
-                                    "Publicar informações falsas ou enganosas.",
-                                    "Utilizar linguagem ofensiva, discriminatória ou que promova ódio.",
-                                    "Assediar, ameaçar ou intimidar outros usuários.",
-                                    "Publicar conteúdo ilegal ou que viole direitos de terceiros.",
-                                    "Criar contas falsas para manipular avaliações ou classificações.",
-                                    "Tentar acessar áreas restritas da plataforma sem autorização.",
-                                    "Utilizar sistemas automatizados para coletar dados da plataforma sem autorização prévia.",
-                                  ],
-                                  itemsLabel: "É proibido:",
-                                },
-                                {
-                                  title: "2. Avaliações e Comentários",
-                                  content: "Os usuários são responsáveis pelo conteúdo que publicam. As avaliações devem refletir experiências reais, ser honestas e baseadas em fatos, não conter ofensas pessoais nem informações falsas ou difamatórias. Reservamo-nos o direito de remover avaliações ou comentários que violem estes Termos.",
-                                },
-                                {
-                                  title: "3. Conteúdo Publicado pelos Usuários",
-                                  content: "Ao publicar conteúdo na plataforma, o usuário declara possuir os direitos necessários para compartilhá-lo. O usuário concede ao PointNear uma licença não exclusiva para exibir, reproduzir e distribuir esse conteúdo dentro da plataforma para fins de funcionamento do serviço.",
-                                },
-                                {
-                                  title: "4. Integridade da Plataforma",
-                                  content: "Para proteger a confiança da comunidade, é proibido comprar ou vender avaliações, manipular classificações, publicar avaliações em troca de benefícios sem informar essa relação, ou criar múltiplas contas para influenciar resultados. Qualquer tentativa de manipulação poderá resultar em suspensão ou exclusão da conta.",
-                                },
-                                {
-                                  title: "5. Moderação",
-                                  content: "O PointNear poderá, a seu exclusivo critério, remover conteúdos inadequados, suspender ou encerrar contas, e limitar funcionalidades de usuários que violem estes Termos.",
-                                },
-                                {
-                                  title: "6. Informações dos Locais",
-                                  content: "Embora busquemos manter as informações atualizadas, não garantimos que horários, preços, telefones, endereços ou demais informações estejam sempre corretos. O usuário deve confirmar informações diretamente com o estabelecimento antes de tomar decisões com base nelas.",
-                                },
-                                {
-                                  title: "7. Privacidade",
-                                  content: "Os dados pessoais dos usuários serão tratados de acordo com nossa Política de Privacidade.",
-                                },
-                                {
-                                  title: "8. Limitação de Responsabilidade",
-                                  content: "O PointNear atua como plataforma de compartilhamento de informações e não se responsabiliza pela qualidade dos serviços prestados pelos estabelecimentos, pela veracidade de conteúdos publicados por usuários, ou por prejuízos decorrentes do uso das informações disponíveis na plataforma.",
-                                },
-                                {
-                                  title: "9. Encerramento de Conta",
-                                  content: "O usuário pode encerrar sua conta a qualquer momento. O PointNear poderá suspender ou encerrar contas que violem estes Termos ou representem risco à segurança da plataforma e da comunidade.",
-                                },
-                                {
-                                  title: "10. Alterações dos Termos",
-                                  content: "Podemos atualizar estes Termos periodicamente. O uso continuado da plataforma após as alterações representa a aceitação das novas condições.",
-                                },
-                                {
-                                  title: "11. Contato",
-                                  content: "Em caso de dúvidas sobre estes Termos, entre em contato através do e-mail: pointneardevs@gmail.com",
-                                },
-                              ].map((section) => (
+                              {TERMS_SECTIONS.map((section) => (
                                 <div key={section.title}>
                                   <h3 className="font-semibold text-moss-900 mb-1">{section.title}</h3>
                                   <p>{section.content}</p>
@@ -843,7 +775,6 @@ export function Register() {
                               ))}
                             </div>
 
-                            {/* Footer */}
                             <div className="px-6 py-4 border-t border-moss/10 flex justify-end">
                               <button
                                 onClick={() => setShowTermsModal(false)}
@@ -861,7 +792,6 @@ export function Register() {
               </AnimatePresence>
             </div>
 
-            {/* Footer Actions */}
             <div className="bg-moss-50/50 border-t border-moss/10 p-4 md:p-6 flex justify-between items-center">
               <button
                 onClick={prevStep}
@@ -875,7 +805,6 @@ export function Register() {
                 <ChevronLeft size={20} /> Voltar
               </button>
 
-              {/* Exibe erro de validação do step ou erro de submissão */}
               {(stepError || submitError) && (
                 <p className="text-sm text-red-600 flex items-center gap-1 mr-4">
                   <AlertCircle size={14} className="shrink-0" />
@@ -917,7 +846,6 @@ export function Register() {
           </div>
         )}
 
-        {/* Success Screen */}
         {step === 6 && (
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
