@@ -18,8 +18,8 @@ import { categoriesService } from "../services/categories.service";
 import { businessesService } from "../services/businesses.service";
 import { Category } from "../types";
 import { useScreenInit } from "../utils/useScreenInit.js";
+import { TERMS_INTRO, TERMS_LAST_UPDATED, TERMS_SECTIONS } from "../utils/termServices.js";
 
-// Geocodifica um endereço usando Nominatim (OpenStreetMap) — gratuito, sem chave
 async function geocodeAddress(params: {
   street: string;
   number: string;
@@ -47,7 +47,6 @@ async function geocodeAddress(params: {
     if (data.length > 0) {
       return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
     }
-    // Tenta só com CEP se o endereço completo falhar
     if (params.zip) {
       const zipUrl = `https://nominatim.openstreetmap.org/search?postalcode=${params.zip.replace(/\D/g, "")}&country=Brasil&format=json&limit=1`;
       const zipRes = await fetch(zipUrl, {
@@ -78,6 +77,9 @@ export function Register() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [submitError, setSubmitError] = useState("");
   const [stepError, setStepError] = useState("");
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [termsError, setTermsError] = useState(false);
+  const [showTermsModal, setShowTermsModal] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -144,7 +146,6 @@ export function Register() {
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    // Limpa erro do step ao usuário começar a corrigir
     if (stepError) setStepError("");
     if (name === "cep") setCepError("");
   };
@@ -189,10 +190,14 @@ export function Register() {
   };
 
   const handleSubmit = async () => {
+    if (!termsAccepted) {
+      setTermsError(true);
+      return;
+    }
+    setTermsError(false);
     setIsSubmitting(true);
     setSubmitError("");
 
-    // Geocodifica o endereço antes de salvar
     setIsGeocoding(true);
     const coords = await geocodeAddress({
       street: formData.street,
@@ -304,10 +309,8 @@ export function Register() {
               </div>
             </div>
 
-            {/* Form Content */}
             <div className="p-6 md:p-10 min-h-[400px]">
               <AnimatePresence mode="wait">
-                {/* STEP 1: Basic Info */}
                 {step === 1 && (
                   <motion.div
                     key="step1"
@@ -368,7 +371,6 @@ export function Register() {
                   </motion.div>
                 )}
 
-                {/* STEP 2: Category & Address */}
                 {step === 2 && (
                   <motion.div
                     key="step2"
@@ -524,7 +526,6 @@ export function Register() {
                   </motion.div>
                 )}
 
-                {/* STEP 3: Contact & Hours */}
                 {step === 3 && (
                   <motion.div
                     key="step3"
@@ -595,7 +596,6 @@ export function Register() {
                   </motion.div>
                 )}
 
-                {/* STEP 4: Photos */}
                 {step === 4 && (
                   <motion.div
                     key="step4"
@@ -637,7 +637,6 @@ export function Register() {
                   </motion.div>
                 )}
 
-                {/* STEP 5: Review */}
                 {step === 5 && (
                   <motion.div
                     key="step5"
@@ -694,24 +693,105 @@ export function Register() {
                         </div>
                       </div>
 
-                      <div className="mt-6 flex items-start gap-3">
-                        <input type="checkbox" id="terms" className="mt-1" />
-                        <label
-                          htmlFor="terms"
-                          className="text-sm text-charcoal-light"
-                        >
-                          Declaro que as informações fornecidas são verdadeiras
-                          e concordo com os Termos de Uso e Política de
-                          Privacidade da plataforma.
-                        </label>
+                      <div className="mt-6">
+                        <div className={`flex items-start gap-3 p-3 rounded-xl transition-colors ${termsError ? "bg-red-50 border border-red-300" : "border border-transparent"}`}>
+                          <input
+                            type="checkbox"
+                            id="terms"
+                            checked={termsAccepted}
+                            onChange={(e) => {
+                              setTermsAccepted(e.target.checked);
+                              if (e.target.checked) setTermsError(false);
+                            }}
+                            className="mt-1 cursor-pointer accent-terracotta"
+                          />
+                          <label
+                            htmlFor="terms"
+                            className="text-sm text-charcoal-light cursor-pointer"
+                          >
+                            Declaro que as informações fornecidas são verdadeiras
+                            e concordo com os{" "}
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                setShowTermsModal(true);
+                              }}
+                              className="text-terracotta underline underline-offset-2 hover:text-terracotta-600 transition-colors font-medium"
+                            >
+                              Termos de Uso e Política de Privacidade
+                            </button>{" "}
+                            da plataforma.
+                          </label>
+                        </div>
+                        {termsError && (
+                          <p className="text-xs text-red-500 mt-1 flex items-center gap-1 pl-1">
+                            <AlertCircle size={13} className="shrink-0" />
+                            Você precisa aceitar os termos para publicar.
+                          </p>
+                        )}
                       </div>
+
+                      {showTermsModal && (
+                        <div
+                          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
+                          onClick={() => setShowTermsModal(false)}
+                        >
+                          <div
+                            className="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[80vh] flex flex-col"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <div className="flex items-center justify-between px-6 py-4 border-b border-moss/10">
+                              <h2 className="text-lg font-serif font-bold text-moss-900">
+                                Termos de Uso
+                              </h2>
+                              <button
+                                onClick={() => setShowTermsModal(false)}
+                                className="text-charcoal-light hover:text-moss-900 transition-colors p-1 rounded-lg hover:bg-moss-50"
+                              >
+                                ✕
+                              </button>
+                            </div>
+
+                              <div className="overflow-y-auto px-6 py-5 space-y-5 text-sm text-charcoal leading-relaxed">
+                              <p className="text-xs text-charcoal-light">Última atualização: {TERMS_LAST_UPDATED}</p>
+                              <p>{TERMS_INTRO}</p>
+
+                              {TERMS_SECTIONS.map((section) => (
+                                <div key={section.title}>
+                                  <h3 className="font-semibold text-moss-900 mb-1">{section.title}</h3>
+                                  <p>{section.content}</p>
+                                  {section.itemsLabel && section.items && (
+                                    <>
+                                      <p className="mt-1">{section.itemsLabel}</p>
+                                      <ul className="list-disc list-inside mt-1 space-y-0.5 text-charcoal-light">
+                                        {section.items.map((item) => (
+                                          <li key={item}>{item}</li>
+                                        ))}
+                                      </ul>
+                                    </>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+
+                            <div className="px-6 py-4 border-t border-moss/10 flex justify-end">
+                              <button
+                                onClick={() => setShowTermsModal(false)}
+                                className="bg-terracotta hover:bg-terracotta-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-colors"
+                              >
+                                Fechar
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </motion.div>
                 )}
               </AnimatePresence>
             </div>
 
-            {/* Footer Actions */}
             <div className="bg-moss-50/50 border-t border-moss/10 p-4 md:p-6 flex justify-between items-center">
               <button
                 onClick={prevStep}
@@ -725,7 +805,6 @@ export function Register() {
                 <ChevronLeft size={20} /> Voltar
               </button>
 
-              {/* Exibe erro de validação do step ou erro de submissão */}
               {(stepError || submitError) && (
                 <p className="text-sm text-red-600 flex items-center gap-1 mr-4">
                   <AlertCircle size={14} className="shrink-0" />
@@ -767,7 +846,6 @@ export function Register() {
           </div>
         )}
 
-        {/* Success Screen */}
         {step === 6 && (
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
