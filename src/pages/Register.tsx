@@ -18,7 +18,7 @@ import { categoriesService } from "../services/categories.service";
 import { businessesService } from "../services/businesses.service";
 import { Category } from "../types";
 import { useScreenInit } from "../utils/useScreenInit.js";
-import { TERMS_INTRO, TERMS_LAST_UPDATED, TERMS_SECTIONS } from "../utils/termServices.js";
+import { TERMS_SECTIONS, TERMS_LAST_UPDATED, TERMS_INTRO } from "../utils/termServices";
 
 async function geocodeAddress(params: {
   street: string;
@@ -47,6 +47,7 @@ async function geocodeAddress(params: {
     if (data.length > 0) {
       return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
     }
+    // tenta so com o cep se o endereço chegar a falhar
     if (params.zip) {
       const zipUrl = `https://nominatim.openstreetmap.org/search?postalcode=${params.zip.replace(/\D/g, "")}&country=Brasil&format=json&limit=1`;
       const zipRes = await fetch(zipUrl, {
@@ -146,29 +147,69 @@ export function Register() {
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    // Limpa erro do step ao usuário começar a corrigir
     if (stepError) setStepError("");
     if (name === "cep") setCepError("");
   };
 
   const validateStep = (currentStep: number): string | null => {
     if (currentStep === 1) {
-      if (!formData.name.trim()) return "Informe o nome do estabelecimento.";
-      if (!formData.description.trim()) return "Informe uma descrição.";
-      if (formData.description.trim().length < 18)
-        return "A descrição deve ter pelo menos 18 caracteres.";
+      if (!formData.name.trim())
+        return "Informe o nome do estabelecimento.";
+      if (formData.name.trim().length < 2)
+        return "O nome deve ter pelo menos 2 caracteres.";
+      if (formData.name.trim().length > 100)
+        return "O nome deve ter no máximo 100 caracteres.";
+      if (!formData.description.trim())
+        return "Informe uma descrição.";
+      if (formData.description.trim().length < 10)
+        return "A descrição deve ter pelo menos 10 caracteres.";
+      if (formData.description.trim().length > 1000)
+        return "A descrição deve ter no máximo 1000 caracteres.";
     }
+
     if (currentStep === 2) {
-      if (!formData.category) return "Selecione uma categoria.";
-      if (!formData.cep.trim()) return "Informe o CEP.";
-      if (!formData.street.trim()) return "Informe a rua/avenida.";
-      if (!formData.number.trim()) return "Informe o número.";
-      if (!formData.neighborhood.trim()) return "Informe o bairro.";
-      if (!formData.city.trim()) return "Informe a cidade.";
-      if (!formData.state.trim()) return "Informe o estado.";
+      if (!formData.category)
+        return "Selecione uma categoria.";
+      const cleanCep = formData.cep.replace(/\D/g, "");
+      if (!cleanCep)
+        return "Informe o CEP.";
+      if (cleanCep.length !== 8)
+        return "O CEP deve ter 8 dígitos.";
+      if (cepError)
+        return "CEP inválido. Verifique e tente novamente.";
+      if (!formData.street.trim())
+        return "Informe a rua/avenida.";
+      if (!formData.number.trim())
+        return "Informe o número do endereço.";
+      if (!formData.neighborhood.trim())
+        return "Informe o bairro.";
+      if (!formData.city.trim())
+        return "Informe a cidade.";
+      if (!formData.state.trim())
+        return "Informe o estado.";
+      if (formData.state.trim().length !== 2)
+        return "Use a sigla do estado com 2 letras (ex: BA, SP).";
     }
+
     if (currentStep === 3) {
-      if (!formData.whatsapp.trim()) return "Informe o número de WhatsApp.";
+      const cleanWhatsapp = formData.whatsapp.replace(/\D/g, "");
+      if (!cleanWhatsapp)
+        return "Informe o número de WhatsApp.";
+      if (cleanWhatsapp.length < 10 || cleanWhatsapp.length > 11)
+        return "WhatsApp inválido. Informe DDD + número (ex: 71 90000-0000).";
+      if (formData.phone) {
+        const cleanPhone = formData.phone.replace(/\D/g, "");
+        if (cleanPhone.length < 10 || cleanPhone.length > 11)
+          return "Telefone inválido. Informe DDD + número.";
+      }
+      if (formData.instagram) {
+        const igHandle = formData.instagram.trim();
+        if (!/^@?[\w.]{1,30}$/.test(igHandle))
+          return "Instagram inválido. Use apenas letras, números, pontos e underscores (ex: @seunegocio).";
+      }
     }
+
     return null;
   };
 
@@ -309,8 +350,10 @@ export function Register() {
               </div>
             </div>
 
+            {/* Form Content */}
             <div className="p-6 md:p-10 min-h-[400px]">
               <AnimatePresence mode="wait">
+                {/* STEP 1: Basic Info */}
                 {step === 1 && (
                   <motion.div
                     key="step1"
@@ -637,6 +680,7 @@ export function Register() {
                   </motion.div>
                 )}
 
+                {/* STEP 5: Review */}
                 {step === 5 && (
                   <motion.div
                     key="step5"
@@ -732,6 +776,7 @@ export function Register() {
                         )}
                       </div>
 
+                      {/* Modal Termos de Uso */}
                       {showTermsModal && (
                         <div
                           className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
@@ -741,6 +786,7 @@ export function Register() {
                             className="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[80vh] flex flex-col"
                             onClick={(e) => e.stopPropagation()}
                           >
+                            {/* Header */}
                             <div className="flex items-center justify-between px-6 py-4 border-b border-moss/10">
                               <h2 className="text-lg font-serif font-bold text-moss-900">
                                 Termos de Uso
@@ -775,6 +821,7 @@ export function Register() {
                               ))}
                             </div>
 
+                            {/* Footer */}
                             <div className="px-6 py-4 border-t border-moss/10 flex justify-end">
                               <button
                                 onClick={() => setShowTermsModal(false)}
@@ -792,6 +839,7 @@ export function Register() {
               </AnimatePresence>
             </div>
 
+            {/* Footer Actions */}
             <div className="bg-moss-50/50 border-t border-moss/10 p-4 md:p-6 flex justify-between items-center">
               <button
                 onClick={prevStep}
@@ -805,6 +853,7 @@ export function Register() {
                 <ChevronLeft size={20} /> Voltar
               </button>
 
+              {/* Exibe erro de validação do step ou erro de submissão */}
               {(stepError || submitError) && (
                 <p className="text-sm text-red-600 flex items-center gap-1 mr-4">
                   <AlertCircle size={14} className="shrink-0" />
@@ -846,6 +895,7 @@ export function Register() {
           </div>
         )}
 
+        {/* Success Screen */}
         {step === 6 && (
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
