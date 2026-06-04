@@ -19,6 +19,10 @@ import { businessesService } from "../services/businesses.service";
 import { Category } from "../types";
 import { useScreenInit } from "../utils/useScreenInit.js";
 import { TERMS_SECTIONS, TERMS_LAST_UPDATED, TERMS_INTRO } from "../utils/termServices";
+import { uploadService } from "../services/upload.service";
+
+const MIN_DESCRIPTION_LENGTH = 18;
+const MAX_DESCRIPTION_LENGTH = 1000;
 
 async function geocodeAddress(params: {
   street: string;
@@ -96,6 +100,7 @@ export function Register() {
     whatsapp: "",
     phone: "",
     instagram: "",
+    photos: [] as string[],
   });
 
   useEffect(() => {
@@ -152,6 +157,32 @@ export function Register() {
     if (name === "cep") setCepError("");
   };
 
+  const handlePhotoUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const files = Array.from(e.target.files || []);
+
+    try {
+      const uploadedUrls = await Promise.all(
+        files.map((file) => uploadService.uploadImage(file)),
+      );
+
+      setFormData((prev) => ({
+        ...prev,
+        photos: [...prev.photos, ...uploadedUrls],
+      }));
+    } catch {
+      setSubmitError("Erro ao enviar imagens.");
+    }
+  };
+
+  const removePhoto = (index: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      photos: prev.photos.filter((_, i) => i !== index),
+    }));
+  };
+
   const validateStep = (currentStep: number): string | null => {
     if (currentStep === 1) {
       if (!formData.name.trim())
@@ -162,10 +193,10 @@ export function Register() {
         return "O nome deve ter no máximo 100 caracteres.";
       if (!formData.description.trim())
         return "Informe uma descrição.";
-      if (formData.description.trim().length < 10)
-        return "A descrição deve ter pelo menos 10 caracteres.";
-      if (formData.description.trim().length > 1000)
-        return "A descrição deve ter no máximo 1000 caracteres.";
+      if (formData.description.trim().length < MIN_DESCRIPTION_LENGTH)
+        return `A descrição deve ter pelo menos ${MIN_DESCRIPTION_LENGTH} caracteres.`;
+      if (formData.description.trim().length > MAX_DESCRIPTION_LENGTH)
+        return `A descrição deve ter no máximo ${MAX_DESCRIPTION_LENGTH} caracteres.`;
     }
 
     if (currentStep === 2) {
@@ -274,7 +305,7 @@ export function Register() {
           phone: formData.phone,
           instagram: formData.instagram,
         },
-        photos: [],
+        photos: formData.photos,
         services: [],
         priceRange: "$$",
       });
@@ -299,11 +330,11 @@ export function Register() {
   ];
 
   return (
-    <div className="min-h-screen bg-cream py-12">
+    <div className="min-h-screen bg-cream dark:bg-dark-bg py-12">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-10">
-          <h1 className="text-3xl font-serif font-bold text-moss-900 mb-2">
+          <h1 className="text-3xl font-serif font-bold text-moss-900 dark:text-dark-text mb-2">
             Cadastre seu negócio
           </h1>
           <p className="text-charcoal-light">
@@ -312,7 +343,7 @@ export function Register() {
         </div>
 
         {step < 6 && (
-          <div className="bg-white rounded-3xl shadow-soft border border-moss/5 overflow-hidden">
+          <div className="bg-white dark:bg-dark-card rounded-3xl shadow-soft border border-moss/5 dark:border-dark-border overflow-hidden">
             {/* Progress Bar */}
             <div className="bg-moss-50/50 border-b border-moss/10 p-4 md:p-6">
               <div className="flex items-center justify-between relative">
@@ -363,12 +394,12 @@ export function Register() {
                     className="space-y-6"
                   >
                     <div>
-                      <h2 className="text-2xl font-serif font-bold text-moss-900 mb-6">
+                      <h2 className="text-2xl font-serif font-bold text-moss-900 dark:text-dark-text mb-6">
                         Dados do negócio
                       </h2>
                       <div className="space-y-4">
                         <div>
-                          <label className="block text-sm font-medium text-moss-900 mb-1">
+                          <label className="block text-sm font-medium text-moss-900 dark:text-dark-text mb-1">
                             Nome do estabelecimento *
                           </label>
                           <input
@@ -377,11 +408,11 @@ export function Register() {
                             value={formData.name}
                             onChange={handleInputChange}
                             placeholder="Ex: Padaria Pão & Prosa"
-                            className="w-full px-4 py-3 rounded-xl border border-moss-200 focus:border-terracotta focus:ring-1 focus:ring-terracotta outline-none transition-all bg-white"
+                            className="w-full px-4 py-3 rounded-xl border border-moss-200 dark:border-dark-border focus:border-terracotta focus:ring-1 focus:ring-terracotta outline-none transition-all bg-white"
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-moss-900 mb-1">
+                          <label className="block text-sm font-medium text-moss-900 dark:text-dark-text mb-1">
                             Descrição curta *
                           </label>
                           <textarea
@@ -390,22 +421,22 @@ export function Register() {
                             onChange={handleInputChange}
                             placeholder="Conte um pouco sobre o que você oferece..."
                             rows={4}
-                            className="w-full px-4 py-3 rounded-xl border border-moss-200 focus:border-terracotta focus:ring-1 focus:ring-terracotta outline-none transition-all bg-white resize-none"
+                            className="w-full px-4 py-3 rounded-xl border border-moss-200 dark:border-dark-border focus:border-terracotta focus:ring-1 focus:ring-terracotta outline-none transition-all bg-white resize-none"
                           />
                           <div className="flex justify-between mt-1">
                             <p
                               className={`text-xs ${
-                                formData.description.trim().length < 18
+                                formData.description.trim().length < MIN_DESCRIPTION_LENGTH
                                   ? "text-red-500"
                                   : "text-emerald-600"
                               }`}
                             >
-                              {formData.description.trim().length < 18
-                                ? `Mínimo de 18 caracteres (${formData.description.trim().length}/18)`
-                                : "Mínimo de 18 caracteres ✓"}
+                              {formData.description.trim().length < MIN_DESCRIPTION_LENGTH
+                                ? `Mínimo de ${MIN_DESCRIPTION_LENGTH} caracteres (${formData.description.trim().length}/${MIN_DESCRIPTION_LENGTH})`
+                                : `Mínimo de ${MIN_DESCRIPTION_LENGTH} caracteres ✓`}
                             </p>
                             <p className="text-xs text-charcoal-light">
-                              {formData.description.length}/300
+                              {formData.description.length}/{MAX_DESCRIPTION_LENGTH}
                             </p>
                           </div>
                         </div>
@@ -423,19 +454,19 @@ export function Register() {
                     className="space-y-8"
                   >
                     <div>
-                      <h2 className="text-2xl font-serif font-bold text-moss-900 mb-6">
+                      <h2 className="text-2xl font-serif font-bold text-moss-900 dark:text-dark-text mb-6">
                         Categoria e Localização
                       </h2>
                       <div className="space-y-6">
                         <div>
-                          <label className="block text-sm font-medium text-moss-900 mb-1">
+                          <label className="block text-sm font-medium text-moss-900 dark:text-dark-text mb-1">
                             Categoria principal *
                           </label>
                           <select
                             name="category"
                             value={formData.category}
                             onChange={handleInputChange}
-                            className="w-full px-4 py-3 rounded-xl border border-moss-200 focus:border-terracotta focus:ring-1 focus:ring-terracotta outline-none transition-all bg-white"
+                            className="w-full px-4 py-3 rounded-xl border border-moss-200 dark:border-dark-border focus:border-terracotta focus:ring-1 focus:ring-terracotta outline-none transition-all bg-white"
                           >
                             <option value="">Selecione uma categoria</option>
                             {categories.map((c) => (
@@ -447,7 +478,7 @@ export function Register() {
                         </div>
 
                         <div>
-                          <label className="block text-sm font-medium text-moss-900 mb-1">
+                          <label className="block text-sm font-medium text-moss-900 dark:text-dark-text mb-1">
                             Subcategorias (opcional)
                           </label>
                           <input
@@ -456,7 +487,7 @@ export function Register() {
                             value={formData.subcategories}
                             onChange={handleInputChange}
                             placeholder="Ex: Pães artesanais, Cafeteria (separados por vírgula)"
-                            className="w-full px-4 py-3 rounded-xl border border-moss-200 focus:border-terracotta focus:ring-1 focus:ring-terracotta outline-none transition-all bg-white"
+                            className="w-full px-4 py-3 rounded-xl border border-moss-200 dark:border-dark-border focus:border-terracotta focus:ring-1 focus:ring-terracotta outline-none transition-all bg-white"
                           />
                         </div>
 
@@ -464,7 +495,7 @@ export function Register() {
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                           <div className="md:col-span-1">
-                            <label className="block text-sm font-semibold text-moss-900 mb-2">
+                            <label className="block text-sm font-semibold text-moss-900 dark:text-dark-text mb-2">
                               CEP *
                             </label>
                             <div className="relative">
@@ -499,7 +530,7 @@ export function Register() {
                           </div>
 
                           <div className="md:col-span-1">
-                            <label className="block text-sm font-semibold text-moss-900 mb-2">
+                            <label className="block text-sm font-semibold text-moss-900 dark:text-dark-text mb-2">
                               Cidade *
                             </label>
                             <input
@@ -508,11 +539,11 @@ export function Register() {
                               value={formData.city}
                               onChange={handleInputChange}
                               placeholder="Salvador"
-                              className="w-full h-12 px-4 rounded-2xl border border-moss-200 bg-white shadow-sm focus:border-terracotta focus:ring-4 focus:ring-terracotta/10 outline-none transition-all"
+                              className="w-full h-12 px-4 rounded-2xl border border-moss-200 dark:border-dark-border bg-white shadow-sm focus:border-terracotta focus:ring-4 focus:ring-terracotta/10 outline-none transition-all"
                             />
                           </div>
                           <div className="md:col-span-1">
-                            <label className="block text-sm font-semibold text-moss-900 mb-2">
+                            <label className="block text-sm font-semibold text-moss-900 dark:text-dark-text mb-2">
                               Estado *
                             </label>
                             <input
@@ -521,11 +552,11 @@ export function Register() {
                               value={formData.state}
                               onChange={handleInputChange}
                               placeholder="BA"
-                              className="w-full h-12 px-4 rounded-2xl border border-moss-200 bg-white shadow-sm focus:border-terracotta focus:ring-4 focus:ring-terracotta/10 outline-none transition-all"
+                              className="w-full h-12 px-4 rounded-2xl border border-moss-200 dark:border-dark-border bg-white shadow-sm focus:border-terracotta focus:ring-4 focus:ring-terracotta/10 outline-none transition-all"
                             />
                           </div>
                           <div className="md:col-span-2">
-                            <label className="block text-sm font-semibold text-moss-900 mb-2">
+                            <label className="block text-sm font-semibold text-moss-900 dark:text-dark-text mb-2">
                               Rua/Avenida *
                             </label>
                             <input
@@ -534,11 +565,11 @@ export function Register() {
                               value={formData.street}
                               onChange={handleInputChange}
                               placeholder="Rua Exemplo"
-                              className="w-full h-12 px-4 rounded-2xl border border-moss-200 bg-white shadow-sm focus:border-terracotta focus:ring-4 focus:ring-terracotta/10 outline-none transition-all"
+                              className="w-full h-12 px-4 rounded-2xl border border-moss-200 dark:border-dark-border bg-white shadow-sm focus:border-terracotta focus:ring-4 focus:ring-terracotta/10 outline-none transition-all"
                             />
                           </div>
                           <div className="md:col-span-1">
-                            <label className="block text-sm font-semibold text-moss-900 mb-2">
+                            <label className="block text-sm font-semibold text-moss-900 dark:text-dark-text mb-2">
                               Número *
                             </label>
                             <input
@@ -547,11 +578,11 @@ export function Register() {
                               value={formData.number}
                               onChange={handleInputChange}
                               placeholder="123"
-                              className="w-full h-12 px-4 rounded-2xl border border-moss-200 bg-white shadow-sm focus:border-terracotta focus:ring-4 focus:ring-terracotta/10 outline-none transition-all"
+                              className="w-full h-12 px-4 rounded-2xl border border-moss-200 dark:border-dark-border bg-white shadow-sm focus:border-terracotta focus:ring-4 focus:ring-terracotta/10 outline-none transition-all"
                             />
                           </div>
                           <div className="md:col-span-3">
-                            <label className="block text-sm font-semibold text-moss-900 mb-2">
+                            <label className="block text-sm font-semibold text-moss-900 dark:text-dark-text mb-2">
                               Bairro *
                             </label>
                             <input
@@ -560,7 +591,7 @@ export function Register() {
                               value={formData.neighborhood}
                               onChange={handleInputChange}
                               placeholder="Barra"
-                              className="w-full h-12 px-4 rounded-2xl border border-moss-200 bg-white shadow-sm focus:border-terracotta focus:ring-4 focus:ring-terracotta/10 outline-none transition-all"
+                              className="w-full h-12 px-4 rounded-2xl border border-moss-200 dark:border-dark-border bg-white shadow-sm focus:border-terracotta focus:ring-4 focus:ring-terracotta/10 outline-none transition-all"
                             />
                           </div>
                         </div>
@@ -578,13 +609,13 @@ export function Register() {
                     className="space-y-8"
                   >
                     <div>
-                      <h2 className="text-2xl font-serif font-bold text-moss-900 mb-6">
+                      <h2 className="text-2xl font-serif font-bold text-moss-900 dark:text-dark-text mb-6">
                         Contato e Horários
                       </h2>
                       <div className="space-y-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div>
-                            <label className="block text-sm font-medium text-moss-900 mb-1">
+                            <label className="block text-sm font-medium text-moss-900 dark:text-dark-text mb-1">
                               WhatsApp *
                             </label>
                             <input
@@ -593,11 +624,11 @@ export function Register() {
                               value={formData.whatsapp}
                               onChange={handleInputChange}
                               placeholder="(71) 90000-0000"
-                              className="w-full px-4 py-3 rounded-xl border border-moss-200 focus:border-terracotta focus:ring-1 focus:ring-terracotta outline-none transition-all bg-white"
+                              className="w-full px-4 py-3 rounded-xl border border-moss-200 dark:border-dark-border focus:border-terracotta focus:ring-1 focus:ring-terracotta outline-none transition-all bg-white"
                             />
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-moss-900 mb-1">
+                            <label className="block text-sm font-medium text-moss-900 dark:text-dark-text mb-1">
                               Instagram (opcional)
                             </label>
                             <input
@@ -606,7 +637,7 @@ export function Register() {
                               value={formData.instagram}
                               onChange={handleInputChange}
                               placeholder="@seunegocio"
-                              className="w-full px-4 py-3 rounded-xl border border-moss-200 focus:border-terracotta focus:ring-1 focus:ring-terracotta outline-none transition-all bg-white"
+                              className="w-full px-4 py-3 rounded-xl border border-moss-200 dark:border-dark-border focus:border-terracotta focus:ring-1 focus:ring-terracotta outline-none transition-all bg-white"
                             />
                           </div>
                         </div>
@@ -614,7 +645,7 @@ export function Register() {
                         <hr className="border-moss/10" />
 
                         <div>
-                          <h3 className="text-lg font-serif font-bold text-moss-900 mb-4 flex items-center gap-2">
+                          <h3 className="text-lg font-serif font-bold text-moss-900 dark:text-dark-text mb-4 flex items-center gap-2">
                             <Clock size={18} className="text-terracotta" />{" "}
                             Horário de Funcionamento
                           </h3>
@@ -648,34 +679,59 @@ export function Register() {
                     className="space-y-6"
                   >
                     <div>
-                      <h2 className="text-2xl font-serif font-bold text-moss-900 mb-6">
+                      <h2 className="text-2xl font-serif font-bold text-moss-900 dark:text-dark-text mb-6">
                         Fotos do estabelecimento
                       </h2>
-                      <p className="text-charcoal-light mb-6">
-                        Adicione fotos atraentes do seu espaço, produtos ou
-                        serviços. A primeira foto será a capa.
-                      </p>
-                      <div className="border-2 border-dashed border-moss-300 rounded-2xl p-10 text-center hover:bg-moss-50 transition-colors cursor-pointer bg-white">
-                        <div className="w-16 h-16 bg-moss-100 text-moss-500 rounded-full flex items-center justify-center mx-auto mb-4">
+
+                      <label className="border-2 border-dashed border-moss-300 dark:border-dark-border rounded-2xl p-10 text-center hover:bg-moss-50 dark:hover:bg-dark-surface cursor-pointer transition-colors block">
+                        <input
+                          type="file"
+                          multiple
+                          accept="image/*"
+                          className="hidden"
+                          onChange={handlePhotoUpload}
+                        />
+
+                        <div className="w-16 h-16 bg-moss-100 dark:bg-dark-surface text-moss-500 rounded-full flex items-center justify-center mx-auto mb-4">
                           <Upload size={24} />
                         </div>
-                        <h3 className="text-lg font-medium text-moss-900 mb-1">
-                          Clique ou arraste fotos aqui
+
+                        <h3 className="text-lg font-medium text-moss-900 dark:text-dark-text">
+                          Clique para enviar fotos
                         </h3>
+
                         <p className="text-sm text-charcoal-light">
-                          JPG ou PNG, máximo 5MB por foto. (Mock)
+                          JPG, PNG ou WEBP até 5MB
                         </p>
-                      </div>
-                      <div className="grid grid-cols-3 gap-4 mt-6">
-                        {[1, 2, 3].map((i) => (
-                          <div
-                            key={i}
-                            className="aspect-square bg-moss-100 rounded-xl border border-moss-200 flex items-center justify-center text-moss-400"
-                          >
-                            <ImageIcon size={24} />
-                          </div>
-                        ))}
-                      </div>
+                      </label>
+
+                      {formData.photos.length > 0 && (
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6">
+                          {formData.photos.map((photo, index) => (
+                            <div key={photo} className="relative">
+                              <img
+                                src={photo}
+                                alt=""
+                                className="w-full aspect-square object-cover rounded-xl"
+                              />
+
+                              {index === 0 && (
+                                <span className="absolute top-2 left-2 bg-terracotta text-white text-xs px-2 py-1 rounded">
+                                  Capa
+                                </span>
+                              )}
+
+                              <button
+                                type="button"
+                                onClick={() => removePhoto(index)}
+                                className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-7 h-7"
+                              >
+                                ×
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </motion.div>
                 )}
@@ -690,7 +746,7 @@ export function Register() {
                     className="space-y-6"
                   >
                     <div>
-                      <h2 className="text-2xl font-serif font-bold text-moss-900 mb-6">
+                      <h2 className="text-2xl font-serif font-bold text-moss-900 dark:text-dark-text mb-6">
                         Revisão final
                       </h2>
                       <div className="bg-moss-50 rounded-2xl p-6 border border-moss/10 space-y-6">
@@ -783,7 +839,7 @@ export function Register() {
                           onClick={() => setShowTermsModal(false)}
                         >
                           <div
-                            className="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[80vh] flex flex-col"
+                            className="bg-white dark:bg-dark-card rounded-2xl shadow-xl w-full max-w-2xl max-h-[80vh] flex flex-col"
                             onClick={(e) => e.stopPropagation()}
                           >
                             {/* Header */}
@@ -805,7 +861,7 @@ export function Register() {
 
                               {TERMS_SECTIONS.map((section) => (
                                 <div key={section.title}>
-                                  <h3 className="font-semibold text-moss-900 mb-1">{section.title}</h3>
+                                  <h3 className="font-semibold text-moss-900 dark:text-dark-text mb-1">{section.title}</h3>
                                   <p>{section.content}</p>
                                   {section.itemsLabel && section.items && (
                                     <>
@@ -900,12 +956,12 @@ export function Register() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-white rounded-3xl shadow-float p-10 text-center border border-moss/5"
+            className="bg-white dark:bg-dark-card rounded-3xl shadow-float p-10 text-center border border-moss/5"
           >
             <div className="w-24 h-24 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6">
               <CheckCircle2 size={48} />
             </div>
-            <h2 className="text-3xl font-serif font-bold text-moss-900 mb-4">
+            <h2 className="text-3xl font-serif font-bold text-moss-900 dark:text-dark-text mb-4">
               Cadastro realizado com sucesso!
             </h2>
             <p className="text-charcoal-light max-w-md mx-auto mb-8">
